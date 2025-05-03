@@ -13,7 +13,6 @@ export default function Header() {
   const [authOpen, setAuthOpen] = useState(false)
   const [accountOpen, setAccountOpen] = useState(false)
 
-  // Читаем из localStorage на старте
   useEffect(() => {
     const stored = localStorage.getItem('isAuthenticated')
     setIsAuthenticated(stored === 'true')
@@ -26,6 +25,13 @@ export default function Header() {
     router.push('/')
   }
 
+  const handleLogout = () => {
+    localStorage.removeItem('isAuthenticated')
+    setIsAuthenticated(false)
+    setAccountOpen(false)
+    router.refresh()
+  }
+
   const handleClick = () => {
     if (isAuthenticated) {
       setAccountOpen(true)
@@ -34,7 +40,6 @@ export default function Header() {
     }
   }
 
-  // Не показываем кнопку пока не узнаем статус авторизации
   if (isAuthenticated === null) return null
 
   return (
@@ -55,20 +60,19 @@ export default function Header() {
         </div>
       </header>
 
-      {/*Модуль авторизации*/}
       {authOpen && (
         <AuthModal
+          isOpen={authOpen}
           onClose={() => setAuthOpen(false)}
           onLogin={handleLogin}
-          setModalOpen={setAuthOpen}
         />
       )}
 
-      {/*Модуль личного кабинета*/}
       {accountOpen && (
         <AccountModal 
           isOpen={accountOpen} 
           onClose={() => setAccountOpen(false)}
+          onLogout={handleLogout}
         />
       )}
     </>

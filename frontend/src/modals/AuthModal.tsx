@@ -1,57 +1,158 @@
 'use client'
 
-import { Dispatch, FormEvent, SetStateAction } from 'react'
+import { useState, useEffect } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTimes, faCheckCircle, faExclamationCircle } from '@fortawesome/free-solid-svg-icons'
 
 interface LoginModalProps {
+  isOpen: boolean
   onClose: () => void
   onLogin: () => void
-  setModalOpen: Dispatch<SetStateAction<boolean>>
 }
 
-export default function LoginModal({ onClose, onLogin }: LoginModalProps) {
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault()
-    onLogin()
+export default function AuthModal({ isOpen, onClose, onLogin }: LoginModalProps) {
+  const [notification, setNotification] = useState<{
+    show: boolean
+    title: string
+    message: string
+    type: 'success' | 'error'
+  }>({ show: false, title: '', message: '', type: 'success' })
+
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  })
+
+  useEffect(() => {
+    if (notification.show) {
+      const timer = setTimeout(() => {
+        setNotification(prev => ({ ...prev, show: false }))
+      }, 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [notification.show])
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target
+    setFormData(prev => ({ ...prev, [id]: value }))
   }
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+
+    // Простая валидация
+    if (!formData.email || !formData.password) {
+      setNotification({
+        show: true,
+        title: 'Ошибка',
+        message: 'Пожалуйста, заполните все поля',
+        type: 'error'
+      })
+      return
+    }
+
+    // В реальном приложении здесь была бы проверка с сервером
+    onLogin()
+    showSuccessNotification()
+  }
+
+  const showSuccessNotification = () => {
+    setNotification({
+      show: true,
+      title: 'Успешный вход',
+      message: 'Вы успешно авторизовались',
+      type: 'success'
+    })
+  }
+
+  if (!isOpen) return null
+
   return (
-    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-xl">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-semibold text-gray-800">Авторизация</h3>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700 text-xl">×</button>
+    <>
+      <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
+        <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg overflow-hidden">
+          
+          {/* Header */}
+          <div className="bg-indigo-600 text-white p-6">
+            <div className="flex justify-between items-center">
+              <h1 className="text-2xl font-bold">Авторизация</h1>
+              <button 
+                onClick={onClose} 
+                className="text-white hover:text-indigo-200 transition-colors"
+              >
+                <FontAwesomeIcon icon={faTimes} className="text-xl" />
+              </button>
+            </div>
+          </div>
+          
+          {/* Форма авторизации */}
+          <div className="p-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-4">
+                <div>
+                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                    Электронная почта
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    value={formData.email}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                    required
+                  />
+                </div>
+                <div>
+                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                    Пароль
+                  </label>
+                  <input
+                    type="password"
+                    id="password"
+                    value={formData.password}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                    required
+                  />
+                </div>
+              </div>
+              
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  className="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition duration-300 font-medium"
+                >
+                  Авторизироваться
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-              Электронная почта
-            </label>
-            <input
-              type="email"
-              id="email"
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-              required
-            />
-          </div>
-          <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
-              Пароль
-            </label>
-            <input
-              type="password"
-              id="password"
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition"
-              required
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300"
-          >
-            Авторизоваться
-          </button>
-        </form>
       </div>
-    </div>
+
+      {/* Notification */}
+      {notification.show && (
+        <div className="fixed top-5 right-5 bg-white rounded-lg shadow-lg p-4 max-w-sm z-50 animate-fade-in">
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <FontAwesomeIcon 
+                icon={notification.type === 'error' ? faExclamationCircle : faCheckCircle} 
+                className={`text-xl ${notification.type === 'error' ? 'text-red-500' : 'text-green-500'}`} 
+              />
+            </div>
+            <div className="ml-3">
+              <h3 className="text-lg font-medium text-gray-900">{notification.title}</h3>
+              <p className="mt-1 text-sm text-gray-500">{notification.message}</p>
+            </div>
+            <button 
+              onClick={() => setNotification(prev => ({ ...prev, show: false }))}
+              className="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex h-8 w-8"
+            >
+              <FontAwesomeIcon icon={faTimes} />
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   )
 }

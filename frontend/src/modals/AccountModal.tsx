@@ -12,7 +12,15 @@ import {
   faTimes 
 } from '@fortawesome/free-solid-svg-icons'
 
-export default function AccountModal({ isOpen, onClose }: { isOpen: boolean, onClose: () => void }) {
+export default function AccountModal({
+  isOpen,
+  onClose,
+  onLogout
+}: {
+  isOpen: boolean,
+  onClose: () => void,
+  onLogout: () => void
+}) {
   const [settingsActive, setSettingsActive] = useState(false)
 
   const [notification, setNotification] = useState<{
@@ -103,9 +111,9 @@ export default function AccountModal({ isOpen, onClose }: { isOpen: boolean, onC
 
   const handleLogout = () => {
     showNotification('Выход из аккаута', 'Вы успешно вышли из своей учётной записи.', 'info')
-    // In a real app, this would redirect to logout endpoint
     setTimeout(() => {
-      window.location.href = '/'
+      onLogout()
+      onClose()
     }, 1500)
   }
 
