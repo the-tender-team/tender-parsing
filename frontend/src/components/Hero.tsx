@@ -1,4 +1,3 @@
-// Главное описание
 export default function Hero() {
   return (
     <section className="text-center py-16 fade-in bg-gradient-to-r from-blue-50 to-indigo-50">
