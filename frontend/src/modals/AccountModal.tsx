@@ -31,8 +31,8 @@ export default function AccountModal({
   }>({ show: false, title: '', message: '', type: 'success' })
 
   const [userData, setUserData] = useState({
-    email: "user@example.com",
-    role: "Пользователь",
+    email: "default-user@example.com",
+    role: "Посетитель",
     regDate: "2025-05-01 12:34:56",
     userId: "#123456"
   })
