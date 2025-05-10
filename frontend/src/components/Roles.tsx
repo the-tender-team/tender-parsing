@@ -1,17 +1,12 @@
-import { 
-    FaChartPie, 
-    FaUserTie, 
-    FaUserShield, 
-    FaCheckCircle,
-    FaTimesCircle
-} from 'react-icons/fa';
+import { FaChartPie, FaUserTie, FaUserShield, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 
 const roles = [
   {
     title: 'Посетитель',
     description: 'Ознакомление с результатами сканирования и запрос роли администратора в личном кабинете.',
-    icon: <FaChartPie className="text-blue-500 text-xl" />,
-    color: 'blue',
+    icon: <FaChartPie className="text-sky-500 text-xl" />,
+    bgColor: 'bg-sky-100',
+    borderColor: 'border-t-sky-500',
     permissions: [
       { text: 'Просмотр итоговой таблицы', allowed: true },
       { text: 'Настройка фильтров и запуск сканирования', allowed: false },
@@ -22,7 +17,8 @@ const roles = [
     title: 'Администратор',
     description: 'Полный доступ к инстументам по самостоятельному сканированию.',
     icon: <FaUserShield className="text-green-500 text-xl" />,
-    color: 'green',
+    bgColor: 'bg-green-100',
+    borderColor: 'border-t-green-500',
     permissions: [
       { text: 'Просмотр итоговой таблицы', allowed: true },
       { text: 'Настройка фильтров и запуск сканирования', allowed: true },
@@ -33,7 +29,8 @@ const roles = [
     title: 'Владелец',
     description: 'Неограниченные возможности и управление правами пользователей.',
     icon: <FaUserTie className="text-purple-500 text-xl" />,
-    color: 'purple',
+    bgColor: 'bg-purple-100',
+    borderColor: 'border-t-purple-500',
     permissions: [
       { text: 'Просмотр итоговой таблицы', allowed: true },
       { text: 'Настройка фильтров и запуск сканирования', allowed: true },
@@ -42,10 +39,10 @@ const roles = [
   },
 ];
 
-const RoleCard = ({ title, description, icon, color, permissions }: typeof roles[0]) => (
-  <div className={`role-card bg-white rounded-xl shadow-md p-6 border-t-${color}-500`}>
+const RoleCard = ({ title, description, icon, bgColor, borderColor, permissions }: typeof roles[0]) => (
+  <div className={`role-card bg-white rounded-xl shadow-md p-6 border-t-4 ${borderColor}`}>
     <div className="flex items-center mb-4">
-      <div className={`bg-${color}-100 p-3 rounded-full mr-4`}>
+      <div className={`${bgColor} p-3 rounded-full mr-4`}>
         {icon}
       </div>
       <h3 className="text-xl font-semibold text-gray-800">{title}</h3>
@@ -83,4 +80,4 @@ export default function Roles() {
       </div>
     </section>
   );
-}
+};

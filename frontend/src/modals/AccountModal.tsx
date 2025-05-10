@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useState, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
   faCog, 
   faSignOutAlt, 
@@ -10,7 +10,7 @@ import {
   faExclamationCircle, 
   faInfoCircle, 
   faTimes 
-} from '@fortawesome/free-solid-svg-icons'
+} from '@fortawesome/free-solid-svg-icons';
 
 export default function AccountModal({
   isOpen,
@@ -322,5 +322,5 @@ export default function AccountModal({
         </div>
       )}
     </>
-  )
-}
+  );
+};
