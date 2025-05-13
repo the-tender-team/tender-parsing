@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link'; // Добавлен импорт Link
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch, faSignInAlt, faUser } from '@fortawesome/free-solid-svg-icons';
 import AuthModal from "../modals/AuthModal";
@@ -48,7 +49,9 @@ export default function Header() {
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <div className="flex items-center space-x-2">
             <FontAwesomeIcon icon={faSearch} className="text-2xl" />
-            <span className="text-xl font-bold"><a href="/">Tender Parsing</a></span>
+            <span className="text-xl font-bold">
+              <Link href="/">Tender Parsing</Link> {/* Заменено a на Link */}
+            </span>
           </div>
           <button
             onClick={handleClick}
