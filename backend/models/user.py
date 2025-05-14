@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field
 
 MIN_USERNAME_LENGTH = 3
 MAX_USERNAME_LENGTH = 32
@@ -28,6 +28,7 @@ class User(BaseModel):
 
 class UserInDB(User):
     hashed_password: str
+    role: str = "user"
 
 class Token(BaseModel):
     access_token: str
@@ -38,4 +39,3 @@ class PasswordChange(BaseModel):
     new_password: str = Field(..., 
                               min_length=MIN_PASSWORD_LENGTH,
                               max_length=MAX_PASSWORD_LENGTH)
-

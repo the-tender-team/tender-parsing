@@ -1,8 +1,10 @@
 from fastapi import APIRouter, HTTPException, Depends
 from models.user import User, Token, PasswordChange
+from auth.security import (
+    get_password_hash,
+    verify_password
+)
 from auth.auth import (
-    get_password_hash, 
-    verify_password, 
     create_access_token, 
     get_current_user
 )
@@ -17,7 +19,8 @@ def register(user: User):
         raise HTTPException(status_code=400, detail="Пользователь уже существует")
     users_db[user.username] = {
         "username": user.username,
-        "hashed_password": get_password_hash(user.password)
+        "hashed_password": get_password_hash(user.password),
+        "role": "user"
     }
     return {"msg": "Регистрация успешна"}
 
@@ -41,20 +44,18 @@ def login(form_data: OAuth2PasswordRequestForm = Depends()):
 
 
 @router.get("/me")
-def read_me(current_user: str = Depends(get_current_user)):
-    return {"username": current_user}
+def read_me(user: dict = Depends(get_current_user)):
+    return {"username": user["username"], "role": user["role"]}
 
 
 @router.post("/change-password")
-def change_password(data: PasswordChange, current_user: str = Depends(get_current_user)):
-    db_user = users_db.get(current_user)
-    
-    if not db_user:
+def change_password(data: PasswordChange, user: dict = Depends(get_current_user)):
+    if not user:
         raise HTTPException(status_code=404, detail="Пользователь не найден")
     
-    if not verify_password(data.old_password, db_user["hashed_password"]):
+    if not verify_password(data.old_password, user["hashed_password"]):
         raise HTTPException(status_code=401, detail="Старый пароль неверен")
     
-    db_user["hashed_password"] = get_password_hash(data.new_password)
+    user["hashed_password"] = get_password_hash(data.new_password)
     
     return {"msg": "Пароль успешно изменён"}
