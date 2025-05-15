@@ -1,57 +1,78 @@
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
 from datetime import datetime, timezone
 from auth.roles import require_role
-from database.admin_requests import admin_requests_db
-from database.fake_users import users_db
-from models.admin_request import AdminRequest
 from auth.auth import get_current_user
+from database.deps import get_db
+from database.models import AdminRequest, User
 
 router = APIRouter()
 
 # Пользователь подает заявку
 @router.post("/admin-request")
-def request_admin(user=Depends(require_role("user"))):
-    username = user["username"]
-    for r in admin_requests_db:
-        if r["username"] == username and r["status"] == "pending":
-            raise HTTPException(status_code=400, detail="Заявка уже подана и ожидает рассмотрения")
+def request_admin(db: Session = Depends(get_db), user=Depends(require_role("user"))):
+    existing = db.query(AdminRequest).filter(
+        AdminRequest.username == user.username,
+        AdminRequest.status == "pending"
+    ).first()
 
-    request = {
-        "username": username,
-        "created_at": datetime.now(timezone.utc),
-        "status": "pending"
-    }
-    admin_requests_db.append(request)
-    return {"msg": "Заявка на получение прав администратора подана"}
+    if existing:
+        raise HTTPException(status_code=400, detail="Заявка уже подана и ожидает рассмотрения")
+
+    req = AdminRequest(
+        username=user.username,
+        created_at=datetime.now(timezone.utc),
+        status="pending"
+    )
+    db.add(req)
+    db.commit()
+    db.refresh(req)
+    return {"msg": "Заявка подана"}
 
 
-# Владелец видит список всех заявок
-@router.get("/admin-requests", response_model=list[AdminRequest])
-def list_requests(owner=Depends(require_role("owner"))):
-    return admin_requests_db
+# Владелец видит все заявки
+@router.get("/admin-requests")
+def get_requests(db: Session = Depends(get_db), owner=Depends(require_role("owner"))):
+    return db.query(AdminRequest).order_by(AdminRequest.created_at.desc()).all()
 
 
-# Владелец одобряет заявку
+# Одобрение заявки
 @router.post("/admin-requests/approve/{username}")
-def approve_request(username: str, owner=Depends(require_role("owner"))):
-    request = next((r for r in admin_requests_db if r["username"] == username and r["status"] == "pending"), None)
+def approve_admin(username: str, db: Session = Depends(get_db), owner=Depends(require_role("owner"))):
+    request = db.query(AdminRequest).filter(
+        AdminRequest.username == username,
+        AdminRequest.status.in_(["pending", "rejected"])
+    ).first()
     if not request:
-        raise HTTPException(status_code=404, detail="Заявка не найдена или уже обработана")
+        raise HTTPException(status_code=404, detail="Заявка не найдена")
 
-    request["status"] = "approved"
-    if username in users_db:
-        users_db[username]["role"] = "admin"
-        return {"msg": f"Роль администратора выдана пользователю {username}"}
-    else:
+    user = db.query(User).filter(User.username == username).first()
+    if not user:
         raise HTTPException(status_code=404, detail="Пользователь не найден")
 
+    user.role = "admin"
+    request.status = "approved"
 
-# Владелец отклоняет заявку
+    db.commit()
+    return {"msg": f"Пользователь {username} теперь админ"}
+
+
+# Отклонение заявки
 @router.post("/admin-requests/reject/{username}")
-def reject_request(username: str, owner=Depends(require_role("owner"))):
-    request = next((r for r in admin_requests_db if r["username"] == username and r["status"] == "pending"), None)
+def reject_admin(username: str, db: Session = Depends(get_db), owner=Depends(require_role("owner"))):
+    request = db.query(AdminRequest).filter(
+        AdminRequest.username == username,
+        AdminRequest.status.in_(["pending", "approved"])
+    ).first()
     if not request:
-        raise HTTPException(status_code=404, detail="Заявка не найдена или уже обработана")
+        raise HTTPException(status_code=404, detail="Заявка не найдена")
+    
+    user = db.query(User).filter(User.username == username).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Пользователь не найден")
 
-    request["status"] = "rejected"
-    return {"msg": f"Заявка пользователя {username} отклонена"}
+    user.role = "user"
+    request.status = "rejected"
+    
+    db.commit()
+    return {"msg": f"Заявка от пользователя {username} отклонена"}

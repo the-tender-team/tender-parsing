@@ -58,3 +58,5 @@ __docker_cache__/
 .tox/
 htmlcov/
 .pytest_cache/
+
+TODO.txt

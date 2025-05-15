@@ -4,13 +4,13 @@ from concurrent.futures import ThreadPoolExecutor
 import time, random
 from tqdm import tqdm
 from models.parse import ParseFilters, ALLOWED_SORT_BY_STRINGS
+from database.models import ParsedTender
 
 url_base = "https://zakupki.gov.ru/epz/contract/search/results.html"
 params = (
     "?morphology=on&search-filter=Дате+размещения"
     "&fz44=on&contractStageList_2=on&contractStageList=2"
     "&budgetLevelsIdNameHidden=%7B%7D"
-    "&sortBy=UPDATE_DATE"
     "&recordsPerPage=_50&showLotsInfoHidden=false"
 )
 headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 YaBrowser/25.2.2.0 Yowser/2.5 Safari/537.36",
@@ -22,7 +22,7 @@ headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/
 
 def parse_zakupki(filters: ParseFilters):
     max_workers = 3
-    all_results = []
+    all_results: list[ParsedTender] = []
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         pages = list(range(filters.pageStart, filters.pageEnd + 1))
         tasks = [(filters, page) for page in pages]
@@ -49,7 +49,7 @@ def parse_page(args: tuple[ParseFilters, int]):
         raise Exception("Ошибка загрузки страницы")
     
     soup = BeautifulSoup(response.text, "html.parser")
-    results = []
+    results: list[ParsedTender] = []
     
     for block in soup.select(".search-registry-entry-block"):
         try:
@@ -59,7 +59,10 @@ def parse_page(args: tuple[ParseFilters, int]):
             customer = block.select_one(".registry-entry__body-href").get_text(strip=True)
             price = block.select_one(".price-block__value").get_text(strip=True)
             contractNumber = block.select_one(".registry-entry__body-value").get_text(strip=True).replace('\n', '').replace(' ', '').replace("№", "№ ")
-            purchaseObjects = block.select_one(".lots-wrap-content__body__val").get_text(strip=True)
+            try:
+                purchaseObjects = block.select_one(".lots-wrap-content__body__val span span").get_text(strip=True)
+            except Exception as e:
+                purchaseObjects = ""
             dates = block.select(".data-block__value")
             contractDate = dates[0].get_text(strip=True)
             executionDate = dates[1].get_text(strip=True)
@@ -68,18 +71,20 @@ def parse_page(args: tuple[ParseFilters, int]):
             # status_block = block.select_one(".registry-entry__header-mid__title")
             # status = status_block.get_text(strip=True).lower() if status_block else ""
             
-            results.append({
-                "title": title,
-                "link": f"https://zakupki.gov.ru{link}",
-                "customer": customer,
-                "price": price,
-                "contractNumber": contractNumber,
-                "purchaseObjects": purchaseObjects,
-                "contractDate": contractDate,
-                "executionDate": executionDate,
-                "publishDate": publishDate,
-                "updateDate": updateDate,
-            })
+            print(price)
+            results.append(ParsedTender(
+                title=title,
+                link=f"https://zakupki.gov.ru{link}",
+                customer=customer,
+                price=price,
+                contract_number=contractNumber,
+                purchase_objects=purchaseObjects,
+                contract_date=contractDate,
+                execution_date=executionDate,
+                publish_date=publishDate,
+                update_date=updateDate
+            ))
+
         except Exception as e:
             continue
         
@@ -112,7 +117,7 @@ def build_url(filters: ParseFilters, page_number: int):
     else:
         url += f"&sortDirection={False}"
     
-    url += f"&sortBy{ALLOWED_SORT_BY_STRINGS[filters.sortBy - 1]}"
+    url += f"&sortBy={ALLOWED_SORT_BY_STRINGS[filters.sortBy - 1]}"
     
     if filters.contractDateFrom:
         url += f"&contractDateFrom={filters.contractDateFrom}"
@@ -130,7 +135,7 @@ def build_url(filters: ParseFilters, page_number: int):
         url += f"&publishDateFrom={filters.publishDateFrom}"
     if filters.publishDateTo:
         url += f"&publishDateTo={filters.publishDateTo}"
-    
+    print(url)
     return url
 
 def termination_grounds_are_valid(filters: ParseFilters):

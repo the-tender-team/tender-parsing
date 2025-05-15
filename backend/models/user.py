@@ -18,7 +18,7 @@ class PasswordInput(BaseModel):
     password: str = Field(..., 
                           min_length=MIN_PASSWORD_LENGTH,
                           max_length=MAX_PASSWORD_LENGTH)
-class User(BaseModel):
+class UserCreate(BaseModel):
     username: str = Field(..., 
                           min_length=MIN_USERNAME_LENGTH, 
                           max_length=MAX_USERNAME_LENGTH)
@@ -26,7 +26,7 @@ class User(BaseModel):
                           min_length=MIN_PASSWORD_LENGTH, 
                           max_length=MAX_PASSWORD_LENGTH)
 
-class UserInDB(User):
+class UserInDB(UserCreate):
     hashed_password: str
     role: str = "user"
 

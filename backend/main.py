@@ -7,3 +7,9 @@ app = FastAPI()
 app.include_router(auth_routes.router)
 app.include_router(parser_routes.router)
 app.include_router(admin_requests_routes.router)
+
+from database.database import Base, engine
+import database.models
+
+# Base.metadata.drop_all(bind=engine) 
+Base.metadata.create_all(bind=engine)
