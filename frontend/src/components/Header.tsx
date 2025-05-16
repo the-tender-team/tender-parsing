@@ -49,7 +49,7 @@ export default function Header() {
           <div className="flex items-center space-x-2">
             <FontAwesomeIcon icon={faSearch} className="text-2xl" />
             <span className="text-xl font-bold">
-              <Link href="/">Tender Parsing</Link> {/* Заменено a на Link */}
+              <a href="/">Tender Parsing</a>
             </span>
           </div>
           <button
