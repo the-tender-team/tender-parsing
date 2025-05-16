@@ -3,8 +3,8 @@ from database.database import SessionLocal
 from database.models import User
 from auth.security import get_password_hash
 
-OWNER_USERNAME = "****"
-OWNER_PASSWORD = "****"
+OWNER_USERNAME = ""
+OWNER_PASSWORD = ""
 
 def create_owner():
     db: Session = SessionLocal()

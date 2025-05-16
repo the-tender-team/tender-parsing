@@ -47,6 +47,7 @@ class ParsedTender(Base):
 
     def to_dict(self):
         return {
+            "id": self.id,
             "title": self.title,
             "link": self.link,
             "customer": self.customer,
@@ -77,3 +78,13 @@ class UserSessionView(Base):
     username = Column(String, ForeignKey("users.username"), unique=True)
     session_id = Column(Integer, ForeignKey("parse_sessions.id"))
     assigned_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+class TenderAnalysis(Base):
+    __tablename__ = "tender_analyses"
+
+    id = Column(Integer, primary_key=True)
+    tender_id = Column(Integer, ForeignKey("parsed_tenders.id"), unique=True)
+    result = Column(Text)
+    analyzed_at = Column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+
+    tender = relationship("ParsedTender", backref="analysis")

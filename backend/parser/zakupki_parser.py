@@ -5,6 +5,7 @@ import time, random
 from tqdm import tqdm
 from models.parse import ParseFilters, ALLOWED_SORT_BY_STRINGS
 from database.models import ParsedTender
+from fastapi import HTTPException
 
 url_base = "https://zakupki.gov.ru/epz/contract/search/results.html"
 params = (
@@ -46,7 +47,7 @@ def parse_page(args: tuple[ParseFilters, int]):
 
 
     if response.status_code != 200:
-        raise Exception("Ошибка загрузки страницы")
+        raise HTTPException(status_code=502, detail="Ошибка загрузки страницы с zakupki.gov.ru")
     
     soup = BeautifulSoup(response.text, "html.parser")
     results: list[ParsedTender] = []

@@ -5,7 +5,9 @@ from models.parse import ParseFilters
 from auth.roles import require_role
 from database.deps import get_db
 from sqlalchemy.orm import Session
-from database.models import ParsedTender, User, ParseSession, UserSessionView
+from database.models import ParsedTender, User, ParseSession, UserSessionView, TenderAnalysis
+from llm.analysis import analyze_tender
+import asyncio
 
 router = APIRouter()
 
@@ -65,3 +67,24 @@ def pull_latest(db: Session = Depends(get_db), user=Depends(require_role("user")
 
     db.commit()
     return {"msg": f"Получена последняя таблица от {latest.owner_username}"}
+
+@router.post("/tenders/{tender_id}/analyze")
+def analyze_tender_by_id(tender_id: int, db: Session = Depends(get_db), user=Depends(require_role("user", "admin", "owner"))):
+    tender = db.query(ParsedTender).filter_by(id=tender_id).first()
+    if not tender:
+        raise HTTPException(404, detail="Тендер не найден")
+
+    existing_analysis = db.query(TenderAnalysis).filter_by(tender_id=tender.id).first()
+    if existing_analysis:
+        return {"analysis": existing_analysis.result, "cached": True}
+
+    try:
+        result = asyncio.run(analyze_tender(tender))
+    except Exception as e:
+        raise HTTPException(500, detail=f"Ошибка анализа: {str(e)}")
+
+    analysis = TenderAnalysis(tender_id=tender.id, result=result)
+    db.add(analysis)
+    db.commit()
+
+    return {"analysis": result, "cached": False}
