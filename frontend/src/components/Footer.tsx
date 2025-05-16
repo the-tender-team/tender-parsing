@@ -1,4 +1,4 @@
-import { FaGithub } from 'react-icons/fa';
+import { FaGithub } from 'react-icons/fa'
 
 export default function Footer() {
   return (
@@ -12,5 +12,5 @@ export default function Footer() {
         </div>
       </div>
     </footer>
-  );
-};
+  )
+}

@@ -9,5 +9,5 @@ export default function Hero() {
         </p>
       </div>
     </section>
-  );
-};
+  )
+}

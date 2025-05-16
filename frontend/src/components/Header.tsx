@@ -1,12 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link'; // Добавлен импорт Link
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faSignInAlt, faUser } from '@fortawesome/free-solid-svg-icons';
-import AuthModal from "../modals/AuthModal";
-import AccountModal from '../modals/AccountModal';
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSearch, faSignInAlt, faUser } from '@fortawesome/free-solid-svg-icons'
+import AuthModal from "../modals/AuthModal"
+import AccountModal from '../modals/AccountModal'
 
 export default function Header() {
   const router = useRouter()
@@ -79,5 +78,5 @@ export default function Header() {
         />
       )}
     </>
-  );
-};
+  )
+}
