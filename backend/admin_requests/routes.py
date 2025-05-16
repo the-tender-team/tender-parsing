@@ -29,6 +29,23 @@ def request_admin(db: Session = Depends(get_db), user=Depends(require_role("user
     db.refresh(req)
     return {"msg": "Заявка подана"}
 
+@router.get("/admin-request-status/{username}")
+def get_request_status(username: str, db: Session = Depends(get_db), user=Depends(get_current_user)):
+    if user.username != username:
+        raise HTTPException(status_code=403, detail="Недостаточно прав")
+
+    request = db.query(AdminRequest).filter(
+        AdminRequest.username == username,
+        AdminRequest.status.in_(["pending", "approved", "rejected"])
+    ).first()
+
+    if not request:
+        raise HTTPException(status_code=404, detail="Заявка не найдена")
+
+    return {
+        "status": request.status,
+        "created_at": request.created_at
+    }
 
 # Владелец видит все заявки
 @router.get("/admin-requests")
