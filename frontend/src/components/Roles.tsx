@@ -1,4 +1,4 @@
-import { FaChartPie, FaUserTie, FaUserShield, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import { FaChartPie, FaUserTie, FaUserShield, FaCheckCircle, FaTimesCircle } from 'react-icons/fa'
 
 const roles = [
   {
@@ -10,8 +10,8 @@ const roles = [
     permissions: [
       { text: 'Просмотр итоговой таблицы', allowed: true },
       { text: 'Настройка фильтров и запуск сканирования', allowed: false },
-      { text: 'Выдача и снятие прав администратора', allowed: false },
-    ],
+      { text: 'Выдача и снятие прав администратора', allowed: false }
+    ]
   },
   {
     title: 'Администратор',
@@ -22,8 +22,8 @@ const roles = [
     permissions: [
       { text: 'Просмотр итоговой таблицы', allowed: true },
       { text: 'Настройка фильтров и запуск сканирования', allowed: true },
-      { text: 'Выдача и снятие прав администратора', allowed: false },
-    ],
+      { text: 'Выдача и снятие прав администратора', allowed: false }
+    ]
   },
   {
     title: 'Владелец',
@@ -34,10 +34,10 @@ const roles = [
     permissions: [
       { text: 'Просмотр итоговой таблицы', allowed: true },
       { text: 'Настройка фильтров и запуск сканирования', allowed: true },
-      { text: 'Выдача и снятие прав администратора', allowed: true },
-    ],
-  },
-];
+      { text: 'Выдача и снятие прав администратора', allowed: true }
+    ]
+  }
+]
 
 const RoleCard = ({ title, description, icon, bgColor, borderColor, permissions }: typeof roles[0]) => (
   <div className={`role-card bg-white rounded-xl shadow-md p-6 border-t-4 ${borderColor}`}>
@@ -61,7 +61,7 @@ const RoleCard = ({ title, description, icon, bgColor, borderColor, permissions 
       ))}
     </div>
   </div>
-);
+)
 
 export default function Roles() {
   return (
@@ -79,5 +79,5 @@ export default function Roles() {
         </div>
       </div>
     </section>
-  );
-};
+  )
+}

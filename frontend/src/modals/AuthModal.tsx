@@ -1,14 +1,14 @@
 'use client'
 
-import { useState, useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTimes, faCheckCircle, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { useState, useEffect } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTimes, faCheckCircle, faExclamationCircle } from '@fortawesome/free-solid-svg-icons'
 
 interface LoginModalProps {
   isOpen: boolean
   onClose: () => void
   onLogin: () => void
-};
+}
 
 export default function AuthModal({ isOpen, onClose, onLogin }: LoginModalProps) {
   const [notification, setNotification] = useState<{
@@ -154,5 +154,5 @@ export default function AuthModal({ isOpen, onClose, onLogin }: LoginModalProps)
         </div>
       )}
     </>
-  );
-};
+  )
+}
