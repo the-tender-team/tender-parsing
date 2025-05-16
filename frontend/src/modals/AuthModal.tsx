@@ -11,17 +11,19 @@ interface LoginModalProps {
 }
 
 export default function AuthModal({ isOpen, onClose, onLogin }: LoginModalProps) {
-  const [notification, setNotification] = useState<{
-    show: boolean
-    title: string
-    message: string
-    type: 'success' | 'error'
-  }>({ show: false, title: '', message: '', type: 'success' })
+  const [notification, setNotification] = useState({
+    show: false,
+    title: '',
+    message: '',
+    type: 'success' as 'success' | 'error'
+  })
 
   const [formData, setFormData] = useState({
     email: '',
     password: ''
   })
+
+  const [activeTab, setActiveTab] = useState<'login' | 'register'>('login')
 
   useEffect(() => {
     if (notification.show) {
@@ -40,7 +42,6 @@ export default function AuthModal({ isOpen, onClose, onLogin }: LoginModalProps)
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
 
-    // Простая валидация
     if (!formData.email || !formData.password) {
       setNotification({
         show: true,
@@ -51,16 +52,12 @@ export default function AuthModal({ isOpen, onClose, onLogin }: LoginModalProps)
       return
     }
 
-    // В реальном приложении здесь была бы проверка с сервером
+    // Имитация успешного входа/регистрации
     onLogin()
-    showSuccessNotification()
-  }
-
-  const showSuccessNotification = () => {
     setNotification({
       show: true,
-      title: 'Успешный вход',
-      message: 'Вы успешно авторизовались',
+      title: activeTab === 'login' ? 'Успешный вход' : 'Регистрация успешна',
+      message: activeTab === 'login' ? 'Вы успешно авторизовались' : 'Вы успешно зарегистрированы',
       type: 'success'
     })
   }
@@ -71,26 +68,40 @@ export default function AuthModal({ isOpen, onClose, onLogin }: LoginModalProps)
     <>
       <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
         <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg overflow-hidden">
-          
-          {/* Header */}
+
+          {/* Header with Tabs */}
           <div className="bg-indigo-600 text-white p-6">
             <div className="flex justify-between items-center">
-              <h1 className="text-2xl font-bold">Авторизация</h1>
-              <button 
-                onClick={onClose} 
-                className="text-white hover:text-indigo-200 transition-colors"
-              >
+              <div className="flex space-x-4">
+                <button
+                  className={`text-xl font-bold pb-1 border-b-2 transition ${
+                    activeTab === 'login' ? 'border-white' : 'border-transparent text-indigo-200'
+                  }`}
+                  onClick={() => setActiveTab('login')}
+                >
+                  Вход
+                </button>
+                <button
+                  className={`text-xl font-bold pb-1 border-b-2 transition ${
+                    activeTab === 'register' ? 'border-white' : 'border-transparent text-indigo-200'
+                  }`}
+                  onClick={() => setActiveTab('register')}
+                >
+                  Регистрация
+                </button>
+              </div>
+              <button onClick={onClose} className="text-white hover:text-indigo-200 transition-colors">
                 <FontAwesomeIcon icon={faTimes} className="text-xl" />
               </button>
             </div>
           </div>
-          
-          {/* Форма авторизации */}
+
+          {/* Form */}
           <div className="p-6">
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-4">
                 <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="email" className="block text-base font-medium text-gray-700 mb-1">
                     Электронная почта
                   </label>
                   <input
@@ -103,7 +114,7 @@ export default function AuthModal({ isOpen, onClose, onLogin }: LoginModalProps)
                   />
                 </div>
                 <div>
-                  <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="password" className="block text-base font-medium text-gray-700 mb-1">
                     Пароль
                   </label>
                   <input
@@ -116,13 +127,12 @@ export default function AuthModal({ isOpen, onClose, onLogin }: LoginModalProps)
                   />
                 </div>
               </div>
-              
               <div className="flex justify-end">
                 <button
                   type="submit"
                   className="w-full bg-indigo-600 text-white py-3 rounded-lg hover:bg-indigo-700 transition duration-300 font-medium"
                 >
-                  Авторизироваться
+                  {activeTab === 'login' ? 'Войти' : 'Зарегистрироваться'}
                 </button>
               </div>
             </form>
