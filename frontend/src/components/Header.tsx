@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faSignInAlt, faUser } from '@fortawesome/free-solid-svg-icons'
-import AuthModal from "../modals/AuthModal"
-import AccountModal from '../modals/AccountModal'
+import AuthModal from '../modals/Auth/Modal'
+import AccountModal from '../modals/Account/Modal'
 
 export default function Header() {
   const router = useRouter()
@@ -14,19 +14,25 @@ export default function Header() {
   const [accountOpen, setAccountOpen] = useState(false)
 
   useEffect(() => {
-    const stored = localStorage.getItem('isAuthenticated')
-    setIsAuthenticated(stored === 'true')
+    async function checkAuth() {
+      try {
+        const res = await fetch('/api/auth/me', { credentials: 'include', cache: 'no-store' })
+        setIsAuthenticated(res.ok)
+      } catch {
+        setIsAuthenticated(false)
+      }
+    }
+    checkAuth()
   }, [])
 
   const handleLogin = () => {
-    localStorage.setItem('isAuthenticated', 'true')
     setIsAuthenticated(true)
     setAuthOpen(false)
-    router.push('/')
+    router.refresh()
   }
 
-  const handleLogout = () => {
-    localStorage.removeItem('isAuthenticated')
+  const handleLogout = async () => {
+
     setIsAuthenticated(false)
     setAccountOpen(false)
     router.refresh()
@@ -40,7 +46,7 @@ export default function Header() {
     }
   }
 
-  if (isAuthenticated === null) return null
+  if (isAuthenticated === null) return null // ждем результата
 
   return (
     <>
@@ -74,7 +80,6 @@ export default function Header() {
         <AccountModal 
           isOpen={accountOpen} 
           onClose={() => setAccountOpen(false)}
-          onLogout={handleLogout}
         />
       )}
     </>
