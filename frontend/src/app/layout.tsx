@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 import '@fortawesome/fontawesome-free/css/all.min.css'
+import { NotificationProvider } from "@/components/ui/NotificationProvider"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -12,17 +13,15 @@ const geistMono = Geist_Mono({
   subsets: ["latin"]
 })
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children, }: Readonly<{ children: React.ReactNode; }>) {
   return (
     <html lang="ru">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {children}
+        <NotificationProvider>
+          {children}
+        </NotificationProvider>
       </body>
     </html>
   )
