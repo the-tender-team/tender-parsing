@@ -1,4 +1,5 @@
 import { FaChartPie, FaUserTie, FaUserShield, FaCheckCircle, FaTimesCircle } from 'react-icons/fa'
+import Section from "@/components/Section"
 
 const roles = [
   {
@@ -50,11 +51,11 @@ const RoleCard = ({ title, description, icon, bgColor, borderColor, permissions 
     <p className="text-gray-600 mb-6">{description}</p>
     <div className="space-y-3">
       {permissions.map(({ text, allowed }, idx) => (
-        <div className="flex items-center" key={idx}>
+        <div className="flex items-center gap-2" key={idx}>
           {allowed ? (
-              <FaCheckCircle className="mr-2 text-green-500" />
+              <FaCheckCircle className="w-4 h-4 text-green-500 flex-shrink-0" />
             ) : (
-              <FaTimesCircle className="mr-2 text-red-400" />
+              <FaTimesCircle className="w-4 h-4 text-red-400 flex-shrink-0" />
             )}
           <span className="text-gray-700">{text}</span>
         </div>
@@ -65,19 +66,16 @@ const RoleCard = ({ title, description, icon, bgColor, borderColor, permissions 
 
 export default function Roles() {
   return (
-    <section className="py-16 bg-white">
-      <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-800 mb-4">Роли пользователей</h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">Представление и сравнение перечней возможностей.</p>
-          <div className="w-24 h-1 bg-blue-500 mx-auto mt-4"></div>
-        </div>
-        <div className="grid md:grid-cols-3 gap-8">
-          {roles.map((role, index) => (
-            <RoleCard key={index} {...role} />
-          ))}
-        </div>
+    <Section 
+      title="Роли пользователей" 
+      description="Представление и сравнение перечней возможностей."
+      bgColor="bg-white"
+    >
+      <div className="grid md:grid-cols-3 gap-8">
+        {roles.map((role, index) => (
+          <RoleCard key={index} {...role} />
+        ))}
       </div>
-    </section>
+    </Section>
   )
 }

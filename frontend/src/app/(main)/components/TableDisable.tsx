@@ -1,5 +1,12 @@
-export default function Table() {
+import Section from "@/components/Section"
+
+export default function TableDisable() {
   return (
-    <h1 className="text-center py-20 bg-amber-500 text-2xl">[Disable] Таблица в процессе разработки</h1>
+    <Section
+      title="Таблица"
+      description="Необходимо авторизироваться, чтобы начать пользоваться сервисом."
+      bgColor="bg-gray-50"
+    >
+    </Section>
   )
 }
