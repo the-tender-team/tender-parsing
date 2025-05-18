@@ -1,9 +1,9 @@
+import { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
-import '@fortawesome/fontawesome-free/css/all.min.css'
 import { NotificationProvider } from "@/libs/NotificationProvider"
 import { AuthProvider } from "@/context/AuthProvider"
-import { Metadata } from "next"
+import '@fortawesome/fontawesome-free/css/all.min.css'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

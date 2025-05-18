@@ -1,12 +1,12 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import {
   faCheckCircle,
   faExclamationCircle,
   faInfoCircle
 } from '@fortawesome/free-solid-svg-icons'
-import { useEffect, useState } from 'react'
 
 export default function Notification({
   show,

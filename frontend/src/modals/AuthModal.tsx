@@ -5,11 +5,11 @@ import { useRouter } from 'next/navigation'
 import { useNotification } from '@/libs/NotificationProvider'
 import { validateAuthData } from '@/libs/validation'
 import { useAuth } from '@/context/AuthProvider'
-import { faSignInAlt, faUserPlus } from '@fortawesome/free-solid-svg-icons'
 import IconButton from '@/components/IconButton'
 import ModalWindow from './ModalWindow'
 import InputField from './ModalnputField'
 import Button from '../components/Button'
+import { faSignInAlt, faUserPlus } from '@fortawesome/free-solid-svg-icons'
 
 type Tab = 'login' | 'register'
 

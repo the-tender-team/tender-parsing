@@ -1,12 +1,12 @@
 'use client'
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSignOutAlt, faUserEdit } from '@fortawesome/free-solid-svg-icons'
 import { useAuth } from '@/context/AuthProvider'
 import { formatDate } from '@/libs/formatDate'
 import InfoField from '../ModalField'
 import SubmitButton from '../../components/Button'
 import Section from '../ModalSection'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSignOutAlt, faUserEdit } from '@fortawesome/free-solid-svg-icons'
 
 interface Props {
   onLogout: () => Promise<void>

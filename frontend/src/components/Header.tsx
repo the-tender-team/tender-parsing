@@ -1,12 +1,12 @@
 'use client'
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSearch, faSignInAlt, faUser } from '@fortawesome/free-solid-svg-icons'
-import { useAuth } from '@/context/AuthProvider'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { useAuth } from '@/context/AuthProvider'
 import AccountModal from '../modals/AccountModal'
 import AuthModal from '../modals/AuthModal'
-import { useState } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSearch, faSignInAlt, faUser } from '@fortawesome/free-solid-svg-icons'
 
 export default function Header() {
   const { isAuthenticated } = useAuth()

@@ -1,8 +1,8 @@
 'use client'
 
+import { ReactNode } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
-import { ReactNode } from 'react'
 
 interface ModalWindowProps {
   isOpen: boolean

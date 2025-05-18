@@ -1,13 +1,13 @@
 'use client'
 
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUserShield, faUserEdit, faKey } from '@fortawesome/free-solid-svg-icons'
-import { useNotification } from '@/libs/NotificationProvider'
 import { useState, useEffect } from 'react'
-import InputField from '../ModalnputField'
 import { useAuth } from '@/context/AuthProvider'
+import { useNotification } from '@/libs/NotificationProvider'
+import InputField from '../ModalnputField'
 import Section from '../ModalSection'
 import Button from '../../components/Button'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faUserShield, faUserEdit, faKey } from '@fortawesome/free-solid-svg-icons'
 
 interface UserData {
   username: string

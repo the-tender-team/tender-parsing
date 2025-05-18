@@ -3,13 +3,12 @@
 
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/context/AuthProvider'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faHome, faCog, faUserShield } from '@fortawesome/free-solid-svg-icons'
 import ModalWindow from './ModalWindow'
 import GeneralTab from './AccountTabs/GeneralTab'
 import SettingsTab from './AccountTabs/SettingsTab'
 import PanelTab from './AccountTabs/PanelTab'
 import IconButton from '@/components/IconButton'
+import { faHome, faCog, faUserShield } from '@fortawesome/free-solid-svg-icons'
 
 type Tab = 'account' | 'settings' | 'panel'
 

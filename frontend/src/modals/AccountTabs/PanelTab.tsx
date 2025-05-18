@@ -1,12 +1,12 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useNotification } from '@/libs/NotificationProvider'
+import Button from '@/components/Button'
+import Section from "../ModalSection"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck, faTimes, faSpinner, faSyncAlt } from '@fortawesome/free-solid-svg-icons'
-import { useNotification } from '@/libs/NotificationProvider'
-import Section from "../ModalSection"
-import Button from '@/components/Button'
-import { faSignOutAlt, faUserEdit } from '@fortawesome/free-solid-svg-icons'
+import { faUserEdit } from '@fortawesome/free-solid-svg-icons'
 
 interface AdminRequest {
   id: number
