@@ -5,7 +5,7 @@ export async function getTokenFromCookies() {
 }
 
 export async function getUserFromBackend() {
-  const token = getTokenFromCookies()
+  const token = await getTokenFromCookies()
   if (!token) return null
 
   const res = await fetch('http://localhost:8000/me', {
