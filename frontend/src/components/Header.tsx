@@ -1,42 +1,18 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faSignInAlt, faUser } from '@fortawesome/free-solid-svg-icons'
-import AuthModal from '../modals/Auth/Modal'
-import AccountModal from '../modals/Account/Modal'
+import { useAuth } from '@/context/AuthProvider'
+import { useRouter } from 'next/navigation'
+import AccountModal from '../modals/AccountModal'
+import AuthModal from '../modals/AuthModal'
+import { useState } from 'react'
 
 export default function Header() {
+  const { isAuthenticated } = useAuth()
   const router = useRouter()
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
   const [authOpen, setAuthOpen] = useState(false)
   const [accountOpen, setAccountOpen] = useState(false)
-
-  useEffect(() => {
-    async function checkAuth() {
-      try {
-        const res = await fetch('/api/auth/me', { credentials: 'include', cache: 'no-store' })
-        setIsAuthenticated(res.ok)
-      } catch {
-        setIsAuthenticated(false)
-      }
-    }
-    checkAuth()
-  }, [])
-
-  const handleLogin = () => {
-    setIsAuthenticated(true)
-    setAuthOpen(false)
-    router.refresh()
-  }
-
-  const handleLogout = async () => {
-
-    setIsAuthenticated(false)
-    setAccountOpen(false)
-    router.refresh()
-  }
 
   const handleClick = () => {
     if (isAuthenticated) {
@@ -46,17 +22,16 @@ export default function Header() {
     }
   }
 
-  if (isAuthenticated === null) return null // ждем результата
-
   return (
     <>
       <header className="bg-gradient-to-br from-indigo-500 to-blue-800 text-white shadow-lg">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-2">
+          <div 
+            className="flex items-center space-x-2 cursor-pointer"
+            onClick={() => router.push('/')}
+          >
             <FontAwesomeIcon icon={faSearch} className="text-2xl" />
-            <span className="text-xl font-bold">
-              <a href="/">Tender Parsing</a>
-            </span>
+            <span className="text-xl font-bold">Tender Parsing</span>
           </div>
           <button
             onClick={handleClick}
@@ -68,20 +43,8 @@ export default function Header() {
         </div>
       </header>
 
-      {authOpen && (
-        <AuthModal
-          isOpen={authOpen}
-          onClose={() => setAuthOpen(false)}
-          onLogin={handleLogin}
-        />
-      )}
-
-      {accountOpen && (
-        <AccountModal 
-          isOpen={accountOpen} 
-          onClose={() => setAccountOpen(false)}
-        />
-      )}
+      <AuthModal isOpen={authOpen} onClose={() => setAuthOpen(false)} />
+      <AccountModal isOpen={accountOpen} onClose={() => setAccountOpen(false)} />
     </>
   )
 }

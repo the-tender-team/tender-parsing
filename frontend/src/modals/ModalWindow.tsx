@@ -4,21 +4,21 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { ReactNode } from 'react'
 
-interface ModalTemplateProps {
+interface ModalWindowProps {
   isOpen: boolean
   onClose: () => void
   title: string
-  children: ReactNode
   iconButtons?: ReactNode
+  children: ReactNode
 }
 
-export default function ModalTemplate({
+export default function ModalWindow({
   isOpen,
   onClose,
   title,
-  children,
-  iconButtons
-}: ModalTemplateProps) {
+  iconButtons,
+  children
+}: ModalWindowProps) {
   if (!isOpen) return null
 
   return (
@@ -33,17 +33,16 @@ export default function ModalTemplate({
               <button
                 onClick={onClose}
                 className="text-white hover:text-indigo-200 transition-colors"
+                aria-label="Close modal"
               >
                 <FontAwesomeIcon icon={faTimes} className="text-xl" />
               </button>
             </div>
           </div>
         </div>
-        
+
         {/* Content */}
-        <div className="overflow-y-auto flex-grow">
-          {children}
-        </div>
+        <div className="overflow-y-auto flex-grow">{children}</div>
       </div>
     </div>
   )
