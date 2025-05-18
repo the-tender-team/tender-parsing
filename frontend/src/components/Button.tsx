@@ -4,10 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { IconDefinition } from '@fortawesome/free-solid-svg-icons'
 
 interface ButtonProps {
-  children: React.ReactNode
+  children?: React.ReactNode
   onClick?: () => void
   type: 'button' | 'submit' | 'reset'
-  variant: 'primary' | 'disabled' | 'danger'
+  variant: 'primary' | 'disabled' | 'danger' | 'auth'
   size?: 'sm' | 'md' | 'lg'
   disabled?: boolean
   icon?: IconDefinition
@@ -17,8 +17,9 @@ interface ButtonProps {
 
 const variantClasses = {
   primary: 'bg-indigo-600 text-white hover:bg-indigo-700',
-  disabled: 'bg-gray-600 text-gray-800',
+  disabled: 'bg-gray-600 text-white',
   danger: 'bg-red-600 text-white hover:bg-red-700',
+  auth: 'bg-white text-indigo-600 hover:bg-gray-100 '
 }
 
 const sizeClasses = {

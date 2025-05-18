@@ -3,7 +3,7 @@
 import { useAuth } from '@/context/AuthProvider'
 import { formatDate } from '@/libs/formatDate'
 import InfoField from '../ModalField'
-import SubmitButton from '../../components/Button'
+import Button from '../../components/Button'
 import Section from '../ModalSection'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSignOutAlt, faUserEdit } from '@fortawesome/free-solid-svg-icons'
@@ -44,7 +44,7 @@ export default function AccountTab({ onLogout }: Props) {
       </Section>
 
       <div className="flex justify-end">
-        <SubmitButton
+        <Button
           onClick={onLogout}
           type={"submit"}
           variant="danger"
@@ -52,7 +52,7 @@ export default function AccountTab({ onLogout }: Props) {
           className="flex items-center gap-2"
         >
           Выйти
-        </SubmitButton>
+        </Button>
       </div>
     </div>
   )

@@ -22,7 +22,7 @@ export default function IconButton({
     <button
       onClick={onClick}
       className={`p-2 pb-1 border-b-2 transition ${
-        isActive ? 'border-white' : 'border-transparent text-indigo-200'
+        isActive ? 'border-white' : 'border-transparent text-indigo-200 hover:border-indigo-400'
       }`}
       title={title}
       aria-label={title}

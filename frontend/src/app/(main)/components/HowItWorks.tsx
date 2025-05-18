@@ -26,6 +26,7 @@ const steps = [
 export default function HowItWorks() {
   return (
     <Section 
+      id="how-it-works"
       title="Принцип работы" 
       description={
         <>

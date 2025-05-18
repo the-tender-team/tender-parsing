@@ -66,7 +66,8 @@ const RoleCard = ({ title, description, icon, bgColor, borderColor, permissions 
 
 export default function Roles() {
   return (
-    <Section 
+    <Section
+      id="roles"
       title="Роли пользователей" 
       description="Представление и сравнение перечней возможностей."
       bgColor="bg-white"

@@ -1,5 +1,13 @@
-export default function Table() {
+import Section from "@/components/Section"
+
+export default function TableDisable() {
   return (
-    <h1 className="text-center py-20 bg-amber-500 text-2xl">[Able] Таблица в процессе разработки</h1>
+    <Section
+      id="table"
+      title="Таблица"
+      description="В процессе разработки."
+      bgColor="bg-gray-50"
+    >
+    </Section>
   )
 }
