@@ -72,7 +72,6 @@ def parse_page(args: tuple[ParseFilters, int]):
             # status_block = block.select_one(".registry-entry__header-mid__title")
             # status = status_block.get_text(strip=True).lower() if status_block else ""
             
-            print(price)
             results.append(ParsedTender(
                 title=title,
                 link=f"https://zakupki.gov.ru{link}",
@@ -136,7 +135,6 @@ def build_url(filters: ParseFilters, page_number: int):
         url += f"&publishDateFrom={filters.publishDateFrom}"
     if filters.publishDateTo:
         url += f"&publishDateTo={filters.publishDateTo}"
-    print(url)
     return url
 
 def termination_grounds_are_valid(filters: ParseFilters):

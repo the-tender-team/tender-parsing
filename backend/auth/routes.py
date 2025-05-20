@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException, Depends
+from fastapi.responses import Response
 from models.user import UserCreate, Token, PasswordChange
 from auth.security import (
     get_password_hash,
@@ -34,24 +35,32 @@ def register(user: UserCreate, db: Session = Depends(get_db)):
     return {"msg": "Регистрация успешна"}
 
 
-@router.post("/login", response_model=Token)
-def login(user: UserCreate, db: Session = Depends(get_db)):
+@router.post("/login")
+def login(user: UserCreate, db: Session = Depends(get_db), response: Response = None):
     db_user = db.query(User).filter(User.username == user.username).first()
     if not db_user or not verify_password(user.password, db_user.hashed_password):
         raise HTTPException(status_code=401, detail="Неверные данные")
 
     token = create_access_token(data={"sub": user.username})
-    return {"access_token": token, "token_type": "bearer"}
+    response.set_cookie(
+        key="access_token",
+        value=token,
+        httponly=True,
+        secure=True,
+        samesite="Strict",
+        max_age=3600
+    )
+    return {"msg": "Вход выполнен"}
 
 
-@router.post("/login/form", response_model=Token)
-def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    db_user = db.query(User).filter(User.username == form_data.username).first()
-    if not db_user or not verify_password(form_data.password, db_user.hashed_password):
-        raise HTTPException(status_code=401, detail="Неверные данные")
+# @router.post("/login/form", response_model=Token)
+# def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+#     db_user = db.query(User).filter(User.username == form_data.username).first()
+#     if not db_user or not verify_password(form_data.password, db_user.hashed_password):
+#         raise HTTPException(status_code=401, detail="Неверные данные")
 
-    token = create_access_token(data={"sub": form_data.username})
-    return {"access_token": token, "token_type": "bearer"}
+#     token = create_access_token(data={"sub": form_data.username})
+#     return {"access_token": token, "token_type": "bearer"}
 
 
 @router.get("/me")

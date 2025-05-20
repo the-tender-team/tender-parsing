@@ -1,5 +1,5 @@
 from fastapi.security import OAuth2PasswordBearer
-from fastapi import Depends, HTTPException
+from fastapi import Depends, HTTPException, Request
 from datetime import datetime, timedelta, timezone
 from jose import JWTError, jwt
 from database.fake_users import users_db
@@ -7,7 +7,7 @@ from database.models import User
 from database.deps import get_db
 from sqlalchemy.orm import Session
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/form")
+# oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/form")
 
 SECRET_KEY = "секретный_ключ_сюда"
 ALGORITHM = "HS256"
@@ -20,7 +20,11 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None):
     return jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
 
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+def get_current_user(request: Request, db: Session = Depends(get_db)):
+    token = request.cookies.get("access_token")
+    if not token:
+        raise HTTPException(status_code=401, detail="Токен отсутствует")
+
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username = payload.get("sub")
