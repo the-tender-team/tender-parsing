@@ -6,7 +6,6 @@ import { AuthProvider } from "@/context/AuthProvider"
 import { UserProvider } from "@/context/UserProvider"
 import { AdminProvider } from "@/context/AdminProvider"
 import { ParserProvider } from '@/context/ParserProvider'
-import '@fortawesome/fontawesome-free/css/all.min.css'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

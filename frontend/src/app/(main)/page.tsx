@@ -6,7 +6,6 @@ import HowItWorks from "@/app/(main)/components/HowItWorks"
 import Roles from "@/app/(main)/components/Roles"
 import Parsing from "@/app/(main)/components/Parsing/index"
 import Footer from "@/components/Footer"
-import { useAuth } from '@/context/AuthProvider'
 
 export default function Home() {
   return (

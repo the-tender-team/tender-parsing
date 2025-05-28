@@ -3,25 +3,6 @@ import { cookies } from 'next/headers'
 import { apiFetch } from '@/libs/api'
 import { getUserFromBackend, getTokenFromCookies } from '@/libs/auth'
 
-interface ParseParams {
-  pageStart?: number
-  pageEnd?: number
-  priceFrom?: number
-  priceTo?: number
-  terminationGrounds?: number[]
-  sortBy?: number
-  sortAscending?: boolean
-  searchString?: string
-  contractDateFrom?: string
-  contractDateTo?: string
-  publishDateFrom?: string
-  publishDateTo?: string
-  updateDateFrom?: string
-  updateDateTo?: string
-  executionDateStart?: string
-  executionDateEnd?: string
-}
-
 export async function POST(req: Request) {
   try {
     // Проверяем авторизацию

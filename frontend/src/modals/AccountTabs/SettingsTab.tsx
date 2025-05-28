@@ -147,7 +147,7 @@ export default function SettingsTab({ userData }: Props) {
             onChange={(e) => setUsernameForm({...usernameForm, newUsername: e.target.value})}
           />
           <InputField
-            id="currentPassword"
+            id="currentPasswordForNewUsername"
             label="Текущий пароль"
             type="password"
             value={usernameForm.currentPassword}
@@ -168,7 +168,7 @@ export default function SettingsTab({ userData }: Props) {
       <Section icon={<FontAwesomeIcon icon={faKey} />} title="Изменение пароля">
         <form onSubmit={handleSavePassword} className="space-y-4">
           <InputField
-            id="currentPassword"
+            id="currentPasswordForNewPassword"
             label="Текущий пароль"
             type="password"
             value={passwordForm.currentPassword}
