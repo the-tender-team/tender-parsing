@@ -19,7 +19,7 @@ export default function Header() {
   const navItems = [
     { id: 'how-it-works', name: 'Принцип работы' },
     { id: 'roles', name: 'Роли' },
-    { id: 'table', name: 'Таблица' }
+    { id: 'parsing', name: 'Парсинг' }
   ]
 
   useEffect(() => {

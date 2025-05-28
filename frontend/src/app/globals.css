@@ -48,3 +48,46 @@ button {
   transform: translateY(-10px);
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
 }
+
+
+
+.date-input::-webkit-calendar-picker-indicator {
+    filter: invert(0.5);
+    cursor: pointer;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.checkbox-container:hover .checkbox-label {
+    color: #3b82f6;
+}
+
+.checkbox-container:hover .checkbox-input {
+    border-color: #3b82f6;
+}
+
+.checkbox-input:checked {
+    background-color: #3b82f6;
+    border-color: #3b82f6;
+}
+
+.transition-all {
+    transition: all 0.3s ease;
+}
