@@ -11,48 +11,56 @@ export interface SettingsData {
   confirmPassword?: string
 }
 
+export interface ChangePasswordData {
+  currentPassword?: string
+  newPassword?: string
+  confirmNewPassword?: string
+  newUsername?: string
+}
+
 export type ValidationResult = {
   valid: boolean
   errors: string[]
 }
 
-export function validateAuthData(data: AuthData): ValidationResult {
-  const errors: string[] = []
+export function validateAuthData(data: AuthData): { isValid: boolean; error?: string } {
+  try {
+    const { username, password, confirmPassword } = data
 
-  const { username, password, confirmPassword } = data
-
-  if (username === undefined || !username.trim()) {
-    errors.push('Электронная почта не введена.')
-  } else {
-    const usernameRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!usernameRegex.test(username.trim())) {
-      errors.push('Некорректный формат электронной почты.')
-    }
-  }
-
-  if (!password?.trim()) {
-    errors.push('Необходимо ввести пароль.')
-  } else {
-    if (password.length < 8) {
-      errors.push('Пароль должен содержать минимум 8 символов.')
+    // Проверка наличия имени пользователя
+    if (username === undefined || !username.trim()) {
+      return { isValid: false, error: 'Введите имя пользователя' }
     }
 
+    // Проверка формата имени пользователя
+    if (username.trim().length < 3) {
+      return { isValid: false, error: 'Имя пользователя должно быть не короче 3 символов' }
+    }
+
+    // Проверка наличия пароля
+    if (!password) {
+      return { isValid: false, error: 'Введите пароль' }
+    }
+
+    // Проверка длины пароля
+    if (password.length < 6) {
+      return { isValid: false, error: 'Пароль должен быть не короче 6 символов' }
+    }
+
+    // Проверка совпадения пароля с именем пользователя
     if (username && password === username) {
-      errors.push('Пароль не должен совпадать с электронной почтой.')
+      return { isValid: false, error: 'Пароль не должен совпадать с именем пользователя' }
     }
-  }
 
-  if (confirmPassword !== undefined) {
-    if (!confirmPassword?.trim()) {
-      errors.push('Необходимо подтвердить пароль.')
-    } else if (password !== confirmPassword) {
-      errors.push('Пароль и его повтор не совпадают.')
+    // Проверка подтверждения пароля
+    if (confirmPassword !== undefined && password !== confirmPassword) {
+      return { isValid: false, error: 'Пароли не совпадают' }
     }
-  }
 
-  return {
-    valid: errors.length === 0,
-    errors
+    return { isValid: true }
+  } catch (error) {
+    console.error('Error in validateAuthData:', error)
+    return { isValid: false, error: 'Ошибка валидации данных' }
   }
 }
 
@@ -60,9 +68,8 @@ export function validateSettingsData(data: SettingsData): ValidationResult {
   const errors: string[] = []
 
   if (data.newUsername) {
-    const usernameRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!usernameRegex.test(data.newUsername)) {
-      errors.push('Новая электронная почта имеет некорректный формат.')
+    if (data.newUsername.trim().length < 3) {
+      errors.push('Имя пользователя должно быть не короче 3 символов')
     }
   }
 
@@ -77,8 +84,8 @@ export function validateSettingsData(data: SettingsData): ValidationResult {
     if (!newPassword?.trim()) {
       errors.push('Новый пароль не введён.')
     } else {
-      if (newPassword.length < 8) {
-        errors.push('Новый пароль должен содержать минимум 8 символов.')
+      if (newPassword.length < 6) {
+        errors.push('Новый пароль должен содержать минимум 6 символов.')
       }
 
       if (currentPassword && newPassword === currentPassword) {
@@ -96,5 +103,40 @@ export function validateSettingsData(data: SettingsData): ValidationResult {
   return {
     valid: errors.length === 0,
     errors
+  }
+}
+
+export function validateChangePasswordData(data: ChangePasswordData): { isValid: boolean; error?: string } {
+  try {
+    // Проверка нового имени пользователя
+    if (data.newUsername) {
+      if (data.newUsername.trim().length < 3) {
+        return { isValid: false, error: 'Имя пользователя должно быть не короче 3 символов' }
+      }
+    }
+
+    // Проверка текущего пароля
+    if (!data.currentPassword) {
+      return { isValid: false, error: 'Введите текущий пароль' }
+    }
+
+    // Проверка нового пароля
+    if (!data.newPassword) {
+      return { isValid: false, error: 'Введите новый пароль' }
+    }
+
+    if (data.newPassword.length < 6) {
+      return { isValid: false, error: 'Новый пароль должен быть не короче 6 символов' }
+    }
+
+    // Проверка подтверждения нового пароля
+    if (data.newPassword !== data.confirmNewPassword) {
+      return { isValid: false, error: 'Пароли не совпадают' }
+    }
+
+    return { isValid: true }
+  } catch (error) {
+    console.error('Error in validateChangePasswordData:', error)
+    return { isValid: false, error: 'Ошибка валидации данных' }
   }
 }
