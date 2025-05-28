@@ -3,6 +3,9 @@ import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 import { NotificationProvider } from "@/libs/NotificationProvider"
 import { AuthProvider } from "@/context/AuthProvider"
+import { UserProvider } from "@/context/UserProvider"
+import { AdminProvider } from "@/context/AdminProvider"
+import { ParserProvider } from '@/context/ParserProvider'
 import '@fortawesome/fontawesome-free/css/all.min.css'
 
 const geistSans = Geist({
@@ -26,11 +29,17 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AuthProvider>
         <NotificationProvider>
-          {children}
+          <AuthProvider>
+            <UserProvider>
+              <AdminProvider>
+                <ParserProvider>
+                  {children}
+                </ParserProvider>
+              </AdminProvider>
+            </UserProvider>
+          </AuthProvider>
         </NotificationProvider>
-        </AuthProvider>
       </body>
     </html>
   )
