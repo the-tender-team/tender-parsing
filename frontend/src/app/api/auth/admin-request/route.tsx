@@ -1,5 +1,6 @@
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
+import { apiFetch } from '@/libs/api'
 
 export async function POST() {
   try {
@@ -12,7 +13,7 @@ export async function POST() {
       )
     }
 
-    const res = await fetch('http://localhost:8000/admin-request', {
+    const res = await apiFetch('/admin-request', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
