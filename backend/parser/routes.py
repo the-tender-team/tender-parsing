@@ -43,6 +43,8 @@ def get_saved_tenders(db: Session = Depends(get_db), user: User =Depends(require
                 view = UserSessionView(username=user.username, session_id=latest.id)
                 db.add(view)
                 db.commit()
+        if not view:
+            return []
         session = db.query(ParseSession).filter(ParseSession.id == view.session_id).first()
 
     if not session:
