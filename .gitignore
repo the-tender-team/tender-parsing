@@ -1,0 +1,63 @@
+# === Глобальное ===
+*.log
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.sqlite3
+
+# === Python virtualenv ===
+venv/
+env/
+ENV/
+.venv/
+
+# === PyCharm / VSCode / IDE ===
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# === FastAPI / Uvicorn / Cache ===
+instance/
+*.db
+*.pid
+*.sqlite3
+*.db-journal
+*.egg-info/
+dist/
+build/
+
+# === Frontend (Next.js, React, etc.) ===
+frontend/.next/
+frontend/node_modules/
+frontend/.env.local
+frontend/.env
+frontend/.turbo/
+
+# === Общие системные штуки ===
+.DS_Store
+Thumbs.db
+
+# === Docker (если будешь использовать) ===
+*.dockerfile
+docker-compose.override.yml
+.env.docker
+__docker_cache__/
+
+# === Output ===
+*.out
+*.exe
+*.log
+*.bak
+*.tmp
+*.old
+
+# === Coverage / тесты ===
+.coverage
+.tox/
+htmlcov/
+.pytest_cache/
+
+TODO.txt
+.env
