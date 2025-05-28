@@ -21,7 +21,6 @@ def get_contract_termination_pdf(tender: ParsedTender) -> str:
 
     response = requests.get(url, headers=headers)
     if response.status_code != 200:
-        print("Не удалось распарсить линк: " + url)
         print(f"Ошибка при загрузке страницы: {response.status_code}")
         return ""
 
@@ -38,3 +37,4 @@ def get_contract_termination_pdf(tender: ParsedTender) -> str:
                 title = link.get('title', '').lower()
                 if "pdf" in title and "filestore" in href:
                     return href
+    return ""

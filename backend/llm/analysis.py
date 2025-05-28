@@ -39,10 +39,9 @@ def generate_analysis_prompt(contract_text: str) -> str:
     return base_prompt.format(contract_text=contract_text)
 
 
-async def analyze_tender(tender: ParsedTender) -> Optional[dict]:
+async def analyze_tender(tender: ParsedTender) -> Optional[str]:
     """Отправляет промт в Yandex LLM и возвращает ответ"""
     pdf_url = get_contract_termination_pdf(tender)
-    print(pdf_url)
     if not pdf_url:
         return ""
     contract_text = await extract_text(pdf_url)
