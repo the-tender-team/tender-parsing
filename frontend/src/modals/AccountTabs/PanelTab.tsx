@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useNotification } from '@/libs/NotificationProvider'
+import { useAdmin } from '@/context/AdminProvider'
+import { useAuth } from '@/context/AuthProvider'
 import Button from '@/components/Button'
 import Section from "../ModalSection"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -16,50 +17,45 @@ interface AdminRequest {
 }
 
 export default function PanelTab() {
-  const { notify } = useNotification()
+  const { handleAdminRequest, fetchAdminRequests } = useAdmin()
+  const { user } = useAuth()
   const [requests, setRequests] = useState<AdminRequest[]>([])
   const [loading, setLoading] = useState(true)
   const [processing, setProcessing] = useState<string | null>(null)
 
-  const fetchRequests = async () => {
+  // Если не owner, не показываем панель
+  if (!user || user.role !== 'owner') {
+    return null
+  }
+
+  const loadRequests = async () => {
     try {
       setLoading(true)
-      const res = await fetch('/api/admin-requests', {
-        credentials: 'include'
-      })
+      const { success, data, error } = await fetchAdminRequests()
       
-      if (!res.ok) throw new Error('Ошибка загрузки заявок')
-      
-      const data = await res.json()
-      setRequests(data)
-    } catch (error: any) {
-      notify({ title: 'Ошибка', message: error.message, type: 'error' })
+      if (success && data) {
+        setRequests(data)
+      } else {
+        console.error('Error fetching requests:', error)
+      }
     } finally {
       setLoading(false)
     }
   }
 
   useEffect(() => {
-    fetchRequests()
+    loadRequests()
   }, [])
 
   const handleAction = async (username: string, action: 'approve' | 'reject') => {
     try {
       setProcessing(username)
-      const res = await fetch(`/api/admin-requests/${action}/${username}`, {
-        method: 'POST',
-        credentials: 'include'
-      })
-      
-      if (!res.ok) {
-        throw new Error(`Ошибка при ${action === 'approve' ? 'одобрении' : 'отклонении'} заявки`)
+      const { success } = await handleAdminRequest(username, action)
+      if (success) {
+        loadRequests()
       }
-      
-      const data = await res.json()
-      notify({ title: 'Успешно', message: data.msg, type: 'success' })
-      fetchRequests()
     } catch (error: any) {
-      notify({ title: 'Ошибка', message: error.message, type: 'error' })
+      console.error('Error handling admin request:', error)
     } finally {
       setProcessing(null)
     }
@@ -71,7 +67,7 @@ export default function PanelTab() {
     <div className="p-6">
       <Section icon={<FontAwesomeIcon icon={faUserEdit} />} title="Заявки на получение роли администратора">   
         <Button
-          onClick={fetchRequests}
+          onClick={loadRequests}
           type="button"
           variant="primary"
           icon={faSyncAlt}

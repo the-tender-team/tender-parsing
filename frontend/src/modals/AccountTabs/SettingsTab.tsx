@@ -2,12 +2,14 @@
 
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/context/AuthProvider'
-import { useNotification } from '@/libs/NotificationProvider'
-import InputField from '../ModalnputField'
+import { useUser } from '@/context/UserProvider'
+import { useAdmin } from '@/context/AdminProvider'
+import InputField from '../ModalInputField'
 import Section from '../ModalSection'
 import Button from '../../components/Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserShield, faUserEdit, faKey } from '@fortawesome/free-solid-svg-icons'
+import { apiFetch } from '@/libs/api'
 
 interface UserData {
   username: string
@@ -21,8 +23,9 @@ interface Props {
 }
 
 export default function SettingsTab({ userData }: Props) {
-  const { notify } = useNotification()
-  const { changePassword, requestAdminRole, refreshUser } = useAuth()
+  const { refreshUser } = useAuth()
+  const { changePassword, changeUsername } = useUser()
+  const { requestAdminRole } = useAdmin()
   
   // Состояния для формы изменения username
   const [usernameForm, setUsernameForm] = useState({
@@ -43,52 +46,34 @@ export default function SettingsTab({ userData }: Props) {
   const [adminRequested, setAdminRequested] = useState(userData.hasPendingAdminRequest || false)
   const [isSubmittingAdminRequest, setIsSubmittingAdminRequest] = useState(false)
 
-  // Проверяем статус запроса при загрузке
+  // Проверяем статус запроса при загрузке и при обновлении userData
   useEffect(() => {
     setAdminRequested(userData.hasPendingAdminRequest || false)
-  }, [userData.hasPendingAdminRequest])
+  }, [userData, userData.hasPendingAdminRequest])
 
   // Обработчик изменения username
   const handleSaveUsername = async (e: React.FormEvent) => {
     e.preventDefault()
     
     if (!usernameForm.newUsername || !usernameForm.currentPassword) {
-      notify({ title: 'Ошибка', message: 'Заполните все поля', type: 'error' })
       return
     }
 
     setIsSubmittingUsername(true)
 
     try {
-      const res = await fetch('/api/auth/change-username', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          new_username: usernameForm.newUsername,
-          current_password: usernameForm.currentPassword
-        }),
-        credentials: 'include'
-      })
+      const { success, error } = await changeUsername(
+        usernameForm.newUsername,
+        usernameForm.currentPassword
+      )
 
-      if (!res.ok) {
-        const error = await res.json()
-        throw new Error(error.detail || 'Ошибка изменения имени пользователя')
+      if (success) {
+        setUsernameForm(prev => ({ ...prev, currentPassword: '' }))
+      } else {
+        throw new Error(error)
       }
-
-      const data = await res.json()
-      notify({ 
-        title: 'Успех', 
-        message: `Имя пользователя изменено на ${data.newUsername}`, 
-        type: 'success' 
-      })
-      setUsernameForm(prev => ({ ...prev, currentPassword: '' }))
-      await refreshUser()
     } catch (error: any) {
-      notify({ 
-        title: 'Ошибка', 
-        message: error.message || 'Не удалось изменить имя пользователя', 
-        type: 'error' 
-      })
+      console.error('Error changing username:', error)
     } finally {
       setIsSubmittingUsername(false)
     }
@@ -99,12 +84,10 @@ export default function SettingsTab({ userData }: Props) {
     e.preventDefault()
     
     if (!passwordForm.currentPassword || !passwordForm.newPassword || !passwordForm.confirmPassword) {
-      notify({ title: 'Ошибка', message: 'Заполните все поля', type: 'error' })
       return
     }
 
     if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-      notify({ title: 'Ошибка', message: 'Пароли не совпадают', type: 'error' })
       return
     }
 
@@ -117,17 +100,16 @@ export default function SettingsTab({ userData }: Props) {
       )
 
       if (success) {
-        notify({ title: 'Успешно', message: 'Вы изменили пароль.', type: 'success' })
         setPasswordForm({
           currentPassword: '',
           newPassword: '',
           confirmPassword: ''
         })
       } else {
-        throw new Error(error || 'Ошибка изменения пароля')
+        throw new Error(error)
       }
     } catch (error: any) {
-      notify({ title: 'Ошибка', message: error.message, type: 'error' })
+      console.error('Error changing password:', error)
     } finally {
       setIsSubmittingPassword(false)
     }
@@ -138,30 +120,15 @@ export default function SettingsTab({ userData }: Props) {
     setIsSubmittingAdminRequest(true)
     
     try {
-      const res = await fetch('/api/admin-request', {
-        method: 'POST',
-        credentials: 'include'
-      })
+      const { success, error } = await requestAdminRole()
 
-      if (!res.ok) {
-        const errorData = await res.json()
-        throw new Error(errorData.detail || 'Ошибка сервера')
+      if (success) {
+        setAdminRequested(true)
+      } else {
+        throw new Error(error)
       }
-
-      const data = await res.json()
-      notify({
-        title: 'Успех',
-        message: data.msg || 'Запрос отправлен администратору',
-        type: 'success'
-      })
-      setAdminRequested(true)
-
     } catch (error: any) {
-      notify({
-        title: 'Ошибка',
-        message: error.message || 'Не удалось отправить запрос',
-        type: 'error'
-      })
+      console.error('Error requesting admin role:', error)
     } finally {
       setIsSubmittingAdminRequest(false)
     }
@@ -169,12 +136,12 @@ export default function SettingsTab({ userData }: Props) {
 
   return (
     <div className="p-6 space-y-6">
-      {/* Секция изменения username */}
-      <Section icon={<FontAwesomeIcon icon={faUserEdit} />} title="Изменение электронной почты">
+      {/* Секция изменения имени пользователя */}
+      <Section icon={<FontAwesomeIcon icon={faUserEdit} />} title="Изменение имени пользователя">
         <form onSubmit={handleSaveUsername} className="space-y-4">
           <InputField
             id="newUsername"
-            label="Новая электронная почта"
+            label="Новое имя пользователя"
             type="text"
             value={usernameForm.newUsername}
             onChange={(e) => setUsernameForm({...usernameForm, newUsername: e.target.value})}
@@ -187,12 +154,12 @@ export default function SettingsTab({ userData }: Props) {
             onChange={(e) => setUsernameForm({...usernameForm, currentPassword: e.target.value})}
           />
           <Button
-            type="submit"
-            variant="primary"
+            type="button"
+            variant="disabled"
             disabled={isSubmittingUsername}
             className="w-full sm:w-auto"
           >
-            Сохранить изменения
+            Недоступно
           </Button>
         </form>
       </Section>

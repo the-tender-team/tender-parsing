@@ -7,8 +7,8 @@ import { validateAuthData } from '@/libs/validation'
 import { useAuth } from '@/context/AuthProvider'
 import IconButton from '@/components/IconButton'
 import ModalWindow from './ModalWindow'
-import InputField from './ModalnputField'
-import Button from '../components/Button'
+import InputField from './ModalInputField'
+import Button from '@/components/Button'
 import { faSignInAlt, faUserPlus } from '@fortawesome/free-solid-svg-icons'
 
 type Tab = 'login' | 'register'
@@ -24,6 +24,9 @@ export default function AuthModal({ isOpen, onClose }: { isOpen: boolean; onClos
     password: '',
     confirmPassword: ''
   })
+  const [error, setError] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [isRegistering, setIsRegistering] = useState(false)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target
@@ -32,43 +35,51 @@ export default function AuthModal({ isOpen, onClose }: { isOpen: boolean; onClos
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-
-    const dataToValidate = activeTab === 'register' ? {
-      username: formData.username,
-      password: formData.password,
-      confirmPassword: formData.confirmPassword
-    } : {
-      username: formData.username,
-      password: formData.password
-    }
-
-    const { valid, errors } = validateAuthData(dataToValidate)
-    if (!valid) {
-      errors.forEach(err => notify({ title: 'Ошибка', message: err, type: 'error' }))
-      return
-    }
+    setError('')
+    setIsLoading(true)
 
     try {
-      if (activeTab === 'register') {
-        const { success, error } = await register(formData.username, formData.password)
-        if (!success) throw new Error(error)
-        
-        notify({ title: 'Успешно', message: 'Вы зарегистрировались. Теперь можете войти в свой аккаунт.', type: 'success' })
-        setActiveTab('login')
-        setFormData(prev => ({ ...prev, password: '', confirmPassword: '' }))
+      const validationResult = validateAuthData({
+        username: formData.username,
+        password: formData.password,
+        confirmPassword: activeTab === 'register' ? formData.confirmPassword : undefined
+      })
+
+      if (!validationResult.isValid) {
+        setError(validationResult.error || 'Ошибка валидации')
         return
       }
 
-      const { success, error } = await login(formData.username, formData.password)
-      if (!success) throw new Error(error)
-
-      notify({ title: 'Успешно', message: 'Вы вошли в свой аккаунт.', type: 'success' })
-      onClose()
-      router.push('/')
-      router.refresh()
-
-    } catch (error: any) {
-      notify({ title: 'Ошибка', message: error.message, type: 'error' })
+      if (activeTab === 'register') {
+        const { success, error } = await register(formData.username, formData.password)
+        if (success) {
+          notify({
+            title: 'Успешно',
+            message: 'Регистрация выполнена успешно',
+            type: 'success'
+          })
+          onClose()
+        } else {
+          setError(error || 'Ошибка при регистрации')
+        }
+      } else {
+        const { success, error } = await login(formData.username, formData.password)
+        if (success) {
+          notify({
+            title: 'Успешно',
+            message: 'Вход выполнен успешно',
+            type: 'success'
+          })
+          onClose()
+        } else {
+          setError(error || 'Ошибка при входе')
+        }
+      }
+    } catch (error) {
+      console.error('Auth error:', error)
+      setError(error instanceof Error ? error.message : 'Неизвестная ошибка')
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -109,7 +120,7 @@ export default function AuthModal({ isOpen, onClose }: { isOpen: boolean; onClos
           <div className="space-y-4">
             <InputField
               id="username"
-              label="Электронная почта"
+              label="Имя пользователя"
               type="text"
               value={formData.username}
               onChange={handleInputChange}

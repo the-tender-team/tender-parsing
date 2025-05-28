@@ -1,4 +1,3 @@
-
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -22,7 +21,6 @@ export default function AccountModal({
   const { user, logout } = useAuth()
   const [activeTab, setActiveTab] = useState<Tab>('account')
 
-
   useEffect(() => {
     if (isOpen && !user) {
       onClose()
@@ -36,9 +34,9 @@ export default function AccountModal({
       case 'account':
         return <GeneralTab onLogout={logout} />
       case 'settings':
-        return <SettingsTab userData={user} /> // Передаем user как userData
+        return <SettingsTab userData={user} />
       case 'panel':
-        return user.role !== 'owner' ? <PanelTab /> : null
+        return user.role === 'owner' ? <PanelTab /> : null
     }
   }
 
@@ -51,7 +49,7 @@ export default function AccountModal({
         tabKey="account"
         activeTab={activeTab}
       />
-      {user.role !== 'owner' && (
+      {user.role === 'owner' && (
         <IconButton
           onClick={() => setActiveTab('panel')}
           icon={faUserShield}
