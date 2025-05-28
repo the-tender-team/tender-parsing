@@ -40,7 +40,7 @@ async def yandex_ocr(session: aiohttp.ClientSession, image_b64: str, max_retries
         "content": image_b64
     }
 
-    backoff = 0.6  # начальная задержка
+    backoff = 1  # начальная задержка
 
     for attempt in range(1, max_retries + 1):
         async with SEM:
@@ -100,7 +100,7 @@ async def parallel_ocr_async(doc) -> list[str]:
     return [res.split("|||", 1)[1] for res in sorted(results)]
 
 
-def extract_text(pdf_url: str, use_ocr: bool = True) -> str | None:
+async def extract_text(pdf_url: str, use_ocr: bool = True) -> str | None:
     try:
         start_all = time.time()
         response = requests.get(pdf_url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=15)
@@ -124,7 +124,7 @@ def extract_text(pdf_url: str, use_ocr: bool = True) -> str | None:
             doc = fitz.open(stream=pdf_bytes.read(), filetype="pdf")
 
             # Запускаем асинхронную OCR обработку
-            ocr_results = asyncio.run(parallel_ocr_async(doc))
+            ocr_results = await parallel_ocr_async(doc)
             text_pages.extend(ocr_results)
 
             duration_ocr = time.time() - start_all

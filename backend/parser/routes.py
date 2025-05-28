@@ -69,7 +69,7 @@ def pull_latest(db: Session = Depends(get_db), user=Depends(require_role("user")
     return {"msg": f"Получена последняя таблица от {latest.owner_username}"}
 
 @router.post("/tenders/{tender_id}/analyze")
-def analyze_tender_by_id(tender_id: int, db: Session = Depends(get_db), user=Depends(require_role("user", "admin", "owner"))):
+async def analyze_tender_by_id(tender_id: int, db: Session = Depends(get_db), user=Depends(require_role("user", "admin", "owner"))):
     tender = db.query(ParsedTender).filter_by(id=tender_id).first()
     if not tender:
         raise HTTPException(404, detail="Тендер не найден")
@@ -77,12 +77,14 @@ def analyze_tender_by_id(tender_id: int, db: Session = Depends(get_db), user=Dep
     existing_analysis = db.query(TenderAnalysis).filter_by(tender_id=tender.id).first()
     if existing_analysis:
         return {"analysis": existing_analysis.result, "cached": True}
-
+    
     try:
-        result = asyncio.run(analyze_tender(tender))
+        result = await analyze_tender(tender)
     except Exception as e:
         raise HTTPException(500, detail=f"Ошибка анализа: {str(e)}")
-
+    
+    if not result:
+        return {"analysis": "Не удалось получить ответ", "cached": False}
     analysis = TenderAnalysis(tender_id=tender.id, result=result)
     db.add(analysis)
     db.commit()

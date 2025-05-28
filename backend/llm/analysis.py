@@ -1,12 +1,11 @@
-from dotenv import load_dotenv
 import requests
 import os
 from typing import Optional
-from ocr import extract_text
+from llm.ocr import extract_text
 from dotenv import load_dotenv
 
 from database.models import ParsedTender
-from fileLinkParser import get_contract_termination_pdf
+from llm.fileLinkParser import get_contract_termination_pdf
 
 
 load_dotenv()
@@ -43,10 +42,10 @@ def generate_analysis_prompt(contract_text: str) -> str:
 async def analyze_tender(tender: ParsedTender) -> Optional[dict]:
     """Отправляет промт в Yandex LLM и возвращает ответ"""
     pdf_url = get_contract_termination_pdf(tender)
-    if pdf_url is None:
+    print(pdf_url)
+    if not pdf_url:
         return ""
-    
-    contract_text = extract_text(pdf_url)
+    contract_text = await extract_text(pdf_url)
     message = generate_analysis_prompt(contract_text)
 
     prompt = {

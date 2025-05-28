@@ -11,9 +11,9 @@ def get_contract_termination_pdf(tender: ParsedTender) -> str:
     Только из блока с заголовком: 'Информация об исполнении (о расторжении) контракта'
     """
 
-    reestrNumber = tender.contract_number
+    reestrNumber = tender.title
 
-    url = "https://zakupki.gov.ru/epz/contract/contractCard/document-info.html?reestrNumber=" + reestrNumber
+    url = "https://zakupki.gov.ru/epz/contract/contractCard/document-info.html?reestrNumber=" + reestrNumber[2:]
 
     headers = {
         "User-Agent": "Mozilla/5.0"
@@ -21,6 +21,7 @@ def get_contract_termination_pdf(tender: ParsedTender) -> str:
 
     response = requests.get(url, headers=headers)
     if response.status_code != 200:
+        print("Не удалось распарсить линк: " + url)
         print(f"Ошибка при загрузке страницы: {response.status_code}")
         return ""
 

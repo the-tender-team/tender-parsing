@@ -2,9 +2,13 @@ from sqlalchemy.orm import Session
 from database.database import SessionLocal
 from database.models import User
 from auth.security import get_password_hash
+from dotenv import load_dotenv
+import os
 
-OWNER_USERNAME = ""
-OWNER_PASSWORD = ""
+load_dotenv()
+
+OWNER_USERNAME = os.getenv("OWNER_USERNAME")
+OWNER_PASSWORD = os.getenv("OWNER_PASSWORD")
 
 def create_owner():
     db: Session = SessionLocal()
