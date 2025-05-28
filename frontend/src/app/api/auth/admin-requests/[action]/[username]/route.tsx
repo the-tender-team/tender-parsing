@@ -4,11 +4,23 @@ import { cookies } from 'next/headers'
 import { apiFetch } from '@/libs/api'
 import { getTokenFromCookies } from '@/libs/auth'
 
-export async function POST() {
+export async function POST(
+  req: Request,
+  { params }: { params: { action: string; username: string } }
+) {
   try {
+    const { action, username } = params
+
+    if (!['approve', 'reject'].includes(action)) {
+      return NextResponse.json(
+        { detail: 'Недопустимое действие' },
+        { status: 400 }
+      )
+    }
+
     // Проверяем роль из заголовка, установленного middleware
     const headersList = await headers()
-    const userRole = headersList.get('X-User-Role')
+    const userRole = headersList.get('x-user-role')
     
     if (!userRole) {
       return NextResponse.json(
@@ -17,9 +29,9 @@ export async function POST() {
       )
     }
 
-    if (userRole !== 'user') {
+    if (userRole !== 'owner') {
       return NextResponse.json(
-        { detail: 'Заявку могут подавать только пользователи' },
+        { detail: 'Недостаточно прав для управления заявками' },
         { status: 403 }
       )
     }
@@ -32,7 +44,7 @@ export async function POST() {
       .join('; ')
 
     // Отправляем запрос на бэкенд
-    const res = await apiFetch('/admin-request', {
+    const res = await apiFetch(`/admin-requests/${action}/${username}`, {
       method: 'POST',
       headers: {
         'Cookie': cookieHeader,
@@ -50,7 +62,7 @@ export async function POST() {
       }
 
       return NextResponse.json(
-        { detail: error.detail || 'Ошибка подачи заявки' },
+        { detail: error.detail || `Ошибка при ${action === 'approve' ? 'одобрении' : 'отклонении'} заявки` },
         { status: res.status }
       )
     }
@@ -59,10 +71,10 @@ export async function POST() {
     return NextResponse.json(data)
 
   } catch (error) {
-    console.error('Error in admin-request API route:', error)
+    console.error('Error in admin-requests action API route:', error)
     return NextResponse.json(
       { detail: 'Внутренняя ошибка сервера' },
       { status: 500 }
     )
   }
-}
+} 

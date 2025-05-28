@@ -3,21 +3,45 @@ import { cookies } from 'next/headers'
 import { apiFetch } from '@/libs/api'
 
 export async function GET() {
-  const token = (await cookies()).get('token')?.value
+  // Получаем все куки
+  const cookieStore = await cookies()
+  const cookieHeader = cookieStore.getAll()
+    .map(cookie => `${cookie.name}=${cookie.value}`)
+    .join('; ')
 
-  if (!token) {
-    return NextResponse.json({ detail: 'Unauthorized' }, { status: 401 })
+  if (!cookieHeader) {
+    return NextResponse.json({ detail: 'Не авторизован' }, { status: 401 })
   }
 
-  const res = await apiFetch('/me', {
-    headers: { Authorization: `Bearer ${token}` },
-    cache: 'no-store',
-  })
+  try {
+    const res = await apiFetch('/me', {
+      headers: { 
+        'cookie': cookieHeader
+      },
+      cache: 'no-store',
+    })
 
-  if (!res.ok) {
-    return NextResponse.json({ detail: 'Unauthorized' }, { status: 401 })
+    if (!res.ok) {
+      let error;
+      try {
+        error = await res.json()
+      } catch (e) {
+        const text = await res.text()
+        error = { detail: text || 'Ошибка сервера' }
+      }
+      return NextResponse.json(
+        { detail: error.detail || 'Не авторизован' },
+        { status: res.status }
+      )
+    }
+
+    const user = await res.json()
+    return NextResponse.json(user)
+  } catch (error) {
+    console.error('Error fetching user data:', error)
+    return NextResponse.json(
+      { detail: 'Внутренняя ошибка сервера' },
+      { status: 500 }
+    )
   }
-
-  const user = await res.json()
-  return NextResponse.json(user)
 }
