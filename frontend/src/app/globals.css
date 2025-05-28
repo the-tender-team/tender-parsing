@@ -8,8 +8,104 @@ button {
   cursor: pointer;
 }
 
-.gradient-bg {
-  background: linear-gradient(135deg, #6b73ff 0%, #000dff 100%);
+.input-label {
+  display: block;         /* block */
+  font-size: 1rem;        /* text-base */
+  font-weight: 500;       /* font-medium */
+  color: #374151;       /* text-gray-700 */
+  margin-bottom: 0.25rem; /* mb-1 */
+}
+
+.input-base {
+  width: 100%;                 /* w-full */
+  padding: 0.5rem 1rem;        /* px-4 py-2 */
+  border: 1px solid #d1d5db; /* border-gray-300 */
+  border-radius: 0.375rem;     /* rounded-md */
+  outline: none;               /* focus:outline-none (default state) */
+  transition-property: box-shadow, border-color;
+  transition-duration: 200ms;
+}
+
+.input-base:focus {
+  outline: none;                   /* focus:outline-none */
+  box-shadow: 0 0 0 2px #4f46e5; /* focus:ring-2 focus:ring-indigo-600 */
+  border-color: #4f46e5;         /* focus:ring-indigo-600 */
+}
+
+.date-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.5rem 1rem;        /* px-4 py-2 */
+  border: 1px solid #d1d5db; /* border border-gray-300 */
+  border-radius: 0.375rem;     /* rounded-md */
+  transition: all 0.15s ease;  /* implicit in focus states */
+}
+
+.date-input:focus {
+  border-color: #4f46e5;         /* focus:border-indigo-600 */
+  outline: none;
+  box-shadow: 0 0 0 2px #4f46e5; /* focus:ring-indigo-600 */
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.checkbox-input {
+  /* Базовые стили */
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid #d1d5db; /* border-gray-300 */
+  border-radius: 0.25rem; /* rounded */
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  
+  /* Центрирование галочки */
+  display: grid;
+  place-content: center;
+}
+
+/* Стиль при наведении (но не выборе) */
+.checkbox-container:hover .checkbox-input:not(:checked) {
+  border-color: #4f46e5; /* indigo-600 */
+}
+
+/* Стиль при выборе (checked) */
+.checkbox-input:checked {
+  background-color: #4f46e5; /* indigo-600 */
+  border-color: #4f46e5;
+}
+
+/* Галочка */
+.checkbox-input:checked::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: white;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+/* Текст лейбла при наведении */
+.checkbox-container:hover .checkbox-label {
+  color: #4f46e5; /* indigo-600 */
+}
+
+/* Текст лейбла для выбранного чекбокса */
+.checkbox-input:checked ~ .checkbox-label {
+  color: #4f46e5; /* indigo-600 */
+  font-weight: 500; /* Можно добавить для выделения */
 }
 
 .card-hover {
@@ -49,45 +145,26 @@ button {
   box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
 }
 
-
-
 .date-input::-webkit-calendar-picker-indicator {
-    filter: invert(0.5);
-    cursor: pointer;
+  filter: invert(0.5);
+  cursor: pointer;
 }
 
 .custom-scrollbar::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+  width: 8px;
+  height: 8px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
+  background: #f1f1f1;
+  border-radius: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #888;
-    border-radius: 10px;
+  background: #888;
+  border-radius: 10px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #555;
-}
-
-.checkbox-container:hover .checkbox-label {
-    color: #3b82f6;
-}
-
-.checkbox-container:hover .checkbox-input {
-    border-color: #3b82f6;
-}
-
-.checkbox-input:checked {
-    background-color: #3b82f6;
-    border-color: #3b82f6;
-}
-
-.transition-all {
-    transition: all 0.3s ease;
+  background: #555;
 }

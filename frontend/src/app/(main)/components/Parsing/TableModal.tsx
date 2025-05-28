@@ -1,6 +1,6 @@
 'use client';
 
-import { TableValue } from './types';
+import { TableValue } from '@/types/tender';
 
 interface ContractModalProps {
   contract: TableValue;
@@ -59,35 +59,35 @@ export default function ContractModal({ contract, onClose }: ContractModalProps)
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-500">Номер контракта:</p>
-                      <p className="mt-1 text-sm text-gray-900">{contract.contractNumber}</p>
+                      <p className="mt-1 text-sm text-gray-900">{contract.contract_number}</p>
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-500">Объекты закупки:</p>
-                      <p className="mt-1 text-sm text-gray-900">{contract.purchaseObjects}</p>
+                      <p className="mt-1 text-sm text-gray-900">{contract.purchase_objects}</p>
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-500">Дата контракта:</p>
-                      <p className="mt-1 text-sm text-gray-900">{contract.contractDate}</p>
+                      <p className="mt-1 text-sm text-gray-900">{contract.contract_date}</p>
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-500">Дата исполнения:</p>
-                      <p className="mt-1 text-sm text-gray-900">{contract.executionDate}</p>
+                      <p className="mt-1 text-sm text-gray-900">{contract.execution_date}</p>
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-500">Дата размещения:</p>
-                      <p className="mt-1 text-sm text-gray-900">{contract.publishDate}</p>
+                      <p className="mt-1 text-sm text-gray-900">{contract.publish_date}</p>
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-500">Дата обновления:</p>
-                      <p className="mt-1 text-sm text-gray-900">{contract.updateDate}</p>
+                      <p className="mt-1 text-sm text-gray-900">{contract.update_date}</p>
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-500">Дата парсинга:</p>
-                      <p className="mt-1 text-sm text-gray-900">{contract.parsedAt}</p>
+                      <p className="mt-1 text-sm text-gray-900">{contract.parsed_at}</p>
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-500">Пользователь:</p>
-                      <p className="mt-1 text-sm text-gray-900">{contract.parsedBy}</p>
+                      <p className="mt-1 text-sm text-gray-900">{contract.parsed_by}</p>
                     </div>
                   </div>
                 </div>

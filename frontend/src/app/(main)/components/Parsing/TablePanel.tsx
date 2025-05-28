@@ -1,7 +1,6 @@
 'use client';
 
-import { sampleData } from "./sampleData";
-import { TableValue } from './types';
+import { TableValue } from '@/types/tender';
 
 interface ContractTableProps {
   data: TableValue[];
@@ -42,7 +41,7 @@ export default function ContractTable({
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
       <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-        <h2 className="text-lg font-semibold text-gray-800">Результаты</h2>
+        <h2 className="text-2xl font-semibold text-gray-800">Результаты</h2>
         <div className="text-sm text-gray-500">Найдено {data.length} контрактов</div>
       </div>
       
@@ -80,16 +79,16 @@ export default function ContractTable({
                     <div className="text-sm text-gray-900">{parseFloat(item.price).toLocaleString('ru-RU')} ₽</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500">{item.contractNumber}</div>
+                    <div className="text-sm text-gray-500">{item.contract_number}</div>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="text-sm text-gray-500 truncate max-w-xs">{item.purchaseObjects}</div>
+                    <div className="text-sm text-gray-500 truncate max-w-xs">{item.purchase_objects}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500">{item.contractDate}</div>
+                    <div className="text-sm text-gray-500">{item.contract_date}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-500">{item.executionDate}</div>
+                    <div className="text-sm text-gray-500">{item.execution_date}</div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button 
