@@ -48,17 +48,9 @@ class ParseFilters(BaseModel):
         if v not in ALLOWED_SORT_BY:
             raise ValueError(f"Недопустимое значения в sortBy. Разрешены только: {ALLOWED_SORT_BY}.")
         return v
-    
-    @field_validator("sortBy")
-    @classmethod
-    def validate_sort_by(cls, v):
-        if not v:
-            return UPDATE_DATE
-        if v not in ALLOWED_SORT_BY:
-            raise ValueError(f"Недопустимое значения в sortBy. Разрешены только: {ALLOWED_SORT_BY}.")
-        return v
-    
-    def is_valid_date(cls, date_str: str) -> bool:
+
+    @staticmethod
+    def is_valid_date(date_str: str) -> bool:
         try:
             datetime.strptime(date_str, "%d.%m.%Y")
             return True

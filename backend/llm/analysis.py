@@ -1,4 +1,4 @@
-import requests
+import aiohttp
 import os
 from typing import Optional
 from llm.ocr import extract_text
@@ -70,9 +70,14 @@ async def analyze_tender(tender: ParsedTender) -> Optional[dict]:
     }
 
     try:
-        response = requests.post(url, headers=headers, json=prompt)
-        response.raise_for_status()
-        return response.json().get("result", {}).get("alternatives", [{}])[0].get("message", {}).get("text", "Не удалось получить ответ")
-    except requests.RequestException as e:
-        print(f' Ошибка при запросе к Yandex LLM: {e}')
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, headers=headers, json=prompt, timeout=30) as response:
+                if response.status != 200:
+                    print(f"[!] Ошибка LLM: HTTP {response.status}")
+                    return None
+
+                data = await response.json()
+                return data.get("result", {}).get("alternatives", [{}])[0].get("message", {}).get("text", "Не удалось получить ответ")
+    except aiohttp.ClientError as e:
+        print(f"[!] Ошибка при запросе к Yandex LLM: {e}")
         return None
