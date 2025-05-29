@@ -1,43 +1,47 @@
-import { NextResponse } from 'next/server'
-import { headers } from 'next/headers'
+import { NextRequest, NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { apiFetch } from '@/libs/api'
-import { getTokenFromCookies } from '@/libs/auth'
+import { getTokenFromCookies, getUserFromBackend } from '@/libs/auth'
 
 export async function POST(
-  req: Request,
+  req: NextRequest,
   { params }: { params: { action: string; username: string } }
 ) {
   try {
-    const { action, username } = params
-
-    if (!['approve', 'reject'].includes(action)) {
-      return NextResponse.json(
-        { detail: 'Недопустимое действие' },
-        { status: 400 }
-      )
-    }
-
-    // Проверяем роль из заголовка, установленного middleware
-    const headersList = await headers()
-    const userRole = headersList.get('x-user-role')
-    
-    if (!userRole) {
+    // Проверяем авторизацию и роль
+    const user = await getUserFromBackend()
+    if (!user) {
       return NextResponse.json(
         { detail: 'Необходима авторизация' },
         { status: 401 }
       )
     }
 
-    if (userRole !== 'owner') {
+    if (user.role !== 'owner') {
       return NextResponse.json(
         { detail: 'Недостаточно прав для управления заявками' },
         { status: 403 }
       )
     }
 
-    // Получаем токен и куки
+    const { action, username } = params
+    if (!username || !['approve', 'reject'].includes(action)) {
+      return NextResponse.json(
+        { detail: 'Некорректные параметры запроса' },
+        { status: 400 }
+      )
+    }
+
+    // Получаем токен
     const token = await getTokenFromCookies()
+    if (!token) {
+      return NextResponse.json(
+        { detail: 'Токен отсутствует' },
+        { status: 401 }
+      )
+    }
+
+    // Получаем куки
     const cookieStore = await cookies()
     const cookieHeader = cookieStore.getAll()
       .map((cookie: { name: string, value: string }) => `${cookie.name}=${cookie.value}`)
@@ -48,7 +52,8 @@ export async function POST(
       method: 'POST',
       headers: {
         'Cookie': cookieHeader,
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
       }
     })
 
@@ -59,6 +64,14 @@ export async function POST(
       } catch (e) {
         const text = await res.text()
         error = { detail: text || 'Ошибка сервера' }
+      }
+
+      // Если бэкенд вернул 401, значит токен невалидный
+      if (res.status === 401) {
+        return NextResponse.json(
+          { detail: 'Сессия истекла, необходимо войти заново' },
+          { status: 401 }
+        )
       }
 
       return NextResponse.json(

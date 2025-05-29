@@ -63,7 +63,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsAuthenticated(true)
       return true
     } catch (error) {
-      console.error('Failed to refresh user:', error)
+      console.error('Failed to refresh user')
       setUser(null)
       setIsAuthenticated(false)
       return false
@@ -136,7 +136,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setIsAuthenticated(false)
       notify({ title: 'Успешно', message: 'Вы вышли из своего аккаунта.', type: 'success' })
     } catch (error) {
-      console.error('Logout error:', error)
       notify({ 
         title: 'Ошибка', 
         message: error instanceof Error ? error.message : 'Ошибка при выходе', 

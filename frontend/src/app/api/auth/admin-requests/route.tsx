@@ -7,6 +7,7 @@ export async function GET() {
   try {
     // Проверяем авторизацию и роль
     const user = await getUserFromBackend()
+    
     if (!user) {
       return NextResponse.json(
         { detail: 'Необходима авторизация' },

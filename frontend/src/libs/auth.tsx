@@ -2,7 +2,8 @@ import { cookies } from 'next/headers'
 import { apiFetch } from './api'
 
 export async function getTokenFromCookies() {
-  return (await cookies()).get('access_token')?.value || ''
+  const token = (await cookies()).get('access_token')?.value || ''
+  return token
 }
 
 export async function getUserFromBackend() {
@@ -11,8 +12,10 @@ export async function getUserFromBackend() {
 
   const res = await apiFetch('/me', {
     headers: { 
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${token}`,
+      'Cookie': `access_token=${token}`
     },
+    credentials: 'include',
     cache: 'no-store'
   })
 
