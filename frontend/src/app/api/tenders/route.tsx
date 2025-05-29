@@ -16,6 +16,8 @@ export async function GET(request: Request) {
 
     // Получаем параметры запроса
     const { searchParams } = new URL(request.url)
+    console.log('Received request with params:', Object.fromEntries(searchParams.entries()));
+
     const queryParams = new URLSearchParams(searchParams)
 
     // Получаем токен из куки для запроса к бэкенду
@@ -24,6 +26,8 @@ export async function GET(request: Request) {
       .map(cookie => `${cookie.name}=${cookie.value}`)
       .join('; ')
 
+    console.log('Sending request to backend:', `/tenders?${queryParams.toString()}`);
+    
     // Отправляем запрос на бэкенд
     const res = await apiFetch(`/tenders?${queryParams.toString()}`, {
       headers: {
@@ -40,6 +44,7 @@ export async function GET(request: Request) {
         error = { detail: text || 'Ошибка сервера' }
       }
 
+      console.error('Backend error:', error);
       return NextResponse.json(
         { detail: error.detail || 'Ошибка получения тендеров' },
         { status: res.status }
@@ -47,6 +52,12 @@ export async function GET(request: Request) {
     }
 
     const data = await res.json()
+    console.log('Received data from backend:', {
+      count: Array.isArray(data) ? data.length : 'not an array',
+      firstItem: Array.isArray(data) && data.length > 0 ? data[0] : null,
+      dataType: typeof data
+    });
+
     return NextResponse.json(data)
 
   } catch (error) {

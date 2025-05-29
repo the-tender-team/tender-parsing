@@ -10,9 +10,10 @@ import Button from '@/components/Button'
 interface FilterPanelProps {
   setFilteredData: (data: any[]) => void;
   setCurrentPageNumber: (page: number) => void;
+  setCurrentFilters: (filters: FilterValue) => void;
 }
 
-export default function FilterPanel({ setFilteredData, setCurrentPageNumber }: FilterPanelProps) {
+export default function FilterPanel({ setFilteredData, setCurrentPageNumber, setCurrentFilters }: FilterPanelProps) {
   const { user, isAuthenticated } = useAuth();
   const { startParsing, fetchTenders } = useParser();
   const [isLoading, setIsLoading] = useState(false);
@@ -40,26 +41,24 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber }: F
     };
   };
 
-  const [filters, setFilters] = useState<FilterValue>(() => {
-    return {
-      pageStart: 1,
-      pageEnd: 1,
-      priceFrom: undefined,
-      priceTo: undefined,
-      terminationGrounds: [],
-      sortBy: 1,
-      sortAscending: false,
-      searchString: '',
-      contractDateFrom: '',
-      contractDateTo: '',
-      publishDateFrom: '',
-      publishDateTo: '',
-      updateDateFrom: '',
-      updateDateTo: '',
-      executionDateStart: '',
-      executionDateEnd: ''
-    };
-  });
+  const [filters, setFilters] = useState<FilterValue>(() => ({
+    pageStart: 1,
+    pageEnd: 1,
+    priceFrom: undefined,
+    priceTo: undefined,
+    terminationGrounds: [],
+    sortBy: 1,
+    sortAscending: false,
+    searchString: '',
+    contractDateFrom: '',
+    contractDateTo: '',
+    publishDateFrom: '',
+    publishDateTo: '',
+    updateDateFrom: '',
+    updateDateTo: '',
+    executionDateStart: '',
+    executionDateEnd: ''
+  }));
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target as HTMLInputElement;
@@ -89,8 +88,8 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber }: F
     setFilters(prev => ({
       ...prev,
       terminationGrounds: checked 
-        ? [...prev.terminationGrounds, numValue]
-        : prev.terminationGrounds.filter(v => v !== numValue)
+        ? [...(prev.terminationGrounds || []), numValue]
+        : (prev.terminationGrounds || []).filter(v => v !== numValue)
     }));
   };
 
@@ -102,28 +101,33 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber }: F
 
     setIsLoading(true);
     try {
+      console.log('Applying filters:', filters);
+      
       if (canParse) {
-        // Сначала запускаем парсинг
+        console.log('Starting parsing with filters:', filters);
         const parseResult = await startParsing(filters);
+        console.log('Parse result:', parseResult);
         
         if (!parseResult.success) {
           if (parseResult.error === 'Необходима авторизация') {
-            // Не показываем дополнительное сообщение, оно уже показано в fetchTenders
             return;
           }
           throw new Error(parseResult.error || 'Ошибка запуска парсинга');
         }
       }
 
-      // Получаем данные (для всех пользователей)
+      console.log('Fetching tenders with filters:', filters);
       const { success, data, error } = await fetchTenders(filters);
+      console.log('Fetch result:', { success, data, error });
       
       if (!success || !data) {
         throw new Error(error || 'Ошибка получения данных');
       }
 
+      console.log('Setting filtered data:', data);
       setFilteredData(data);
       setCurrentPageNumber(1);
+      setCurrentFilters(filters);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Неизвестная ошибка при применении фильтров';
       if (errorMessage !== 'Необходима авторизация') {
@@ -155,6 +159,24 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber }: F
     });
     setFilteredData([]);
     setCurrentPageNumber(1);
+    setCurrentFilters({
+      pageStart: 1,
+      pageEnd: 1,
+      priceFrom: undefined,
+      priceTo: undefined,
+      terminationGrounds: [],
+      sortBy: 1,
+      sortAscending: false,
+      searchString: '',
+      contractDateFrom: '',
+      contractDateTo: '',
+      publishDateFrom: '',
+      publishDateTo: '',
+      updateDateFrom: '',
+      updateDateTo: '',
+      executionDateStart: '',
+      executionDateEnd: ''
+    });
   };
 
   return (
@@ -182,11 +204,11 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber }: F
         {/* Price Range */}
         <div>
           <label className="input-label">Цена (в рублях)</label>
-          <div className="flex space-x-2">
+          <div className="flex flex-wrap gap-2">
             <input
               type="number" 
               name="priceFrom"
-              value={filters.priceFrom}
+              value={filters.priceFrom || ''}
               onChange={handleInputChange}
               placeholder="От"
               className="input-base"
@@ -194,7 +216,7 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber }: F
             <input 
               type="number" 
               name="priceTo"
-              value={filters.priceTo}
+              value={filters.priceTo || ''}
               onChange={handleInputChange}
               placeholder="До" 
               className="input-base"
@@ -205,11 +227,11 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber }: F
         {/* Pages Range */}
         <div>
           <label className="input-label">Номера страниц (1-10)</label>
-          <div className="flex space-x-2">
+          <div className="flex flex-wrap gap-2">
             <input 
               type="number" 
               name="pageStart"
-              value={filters.pageStart}
+              value={filters.pageStart || 1}
               onChange={handleInputChange}
               min="1" 
               max="10" 
@@ -219,7 +241,7 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber }: F
             <input 
               type="number" 
               name="pageEnd"
-              value={filters.pageEnd}
+              value={filters.pageEnd || 1}
               onChange={handleInputChange}
               min="1" 
               max="10" 
@@ -238,7 +260,7 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber }: F
                 type="checkbox" 
                 id="ground1" 
                 value="1" 
-                checked={filters.terminationGrounds.includes(1)}
+                checked={(filters.terminationGrounds || []).includes(1)}
                 onChange={handleCheckboxChange}
                 className="checkbox-input"
               />
@@ -249,7 +271,7 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber }: F
                 type="checkbox" 
                 id="ground2" 
                 value="2" 
-                checked={filters.terminationGrounds.includes(2)}
+                checked={(filters.terminationGrounds || []).includes(2)}
                 onChange={handleCheckboxChange}
                 className="checkbox-input"
               />
@@ -260,7 +282,7 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber }: F
                 type="checkbox" 
                 id="ground3" 
                 value="3" 
-                checked={filters.terminationGrounds.includes(3)}
+                checked={(filters.terminationGrounds || []).includes(3)}
                 onChange={handleCheckboxChange}
                 className="checkbox-input"
               />
@@ -272,7 +294,7 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber }: F
         {/* Contract Date */}
         <div>
           <label className="input-label">Дата контракта</label>
-          <div className="flex space-x-2">
+          <div className="flex flex-wrap gap-2">
             <input 
               type="date" 
               name="contractDateFrom"
@@ -293,7 +315,7 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber }: F
         {/* Publish Date */}
         <div>
           <label className="input-label">Дата размещения</label>
-          <div className="flex space-x-2">
+          <div className="flex flex-wrap gap-2">
             <input 
               type="date" 
               name="publishDateFrom"
@@ -314,7 +336,7 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber }: F
         {/* Update Date */}
         <div>
           <label className="input-label">Дата обновления</label>
-          <div className="flex space-x-2">
+          <div className="flex flex-wrap gap-2">
             <input 
               type="date" 
               name="updateDateFrom"
@@ -335,7 +357,7 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber }: F
         {/* Execution Date */}
         <div>
           <label className="input-label">Дата исполнения</label>
-          <div className="flex space-x-2">
+          <div className="flex flex-wrap gap-2">
             <input 
               type="date" 
               name="executionDateStart"
@@ -356,12 +378,12 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber }: F
         {/* Sort Options */}
         <div>
           <label className="input-label">Сортировка</label>
-          <div className="flex space-x-2">
+          <div className="flex flex-wrap gap-2">
             <select 
               name="sortBy"
-              value={filters.sortBy}
+              value={filters.sortBy || 1}
               onChange={handleInputChange}
-              className="input-base flex-grow"
+              className="input-base"
             >
               <option value={1}>По дате обновления</option>
               <option value={2}>По дате публикации</option>
@@ -370,9 +392,9 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber }: F
             </select>
             <select 
               name="sortAscending"
-              value={filters.sortAscending.toString()}
+              value={(filters.sortAscending ?? false).toString()}
               onChange={handleInputChange}
-              className="input-base w-32"
+              className="input-base"
             >
               <option value="true">По возрастанию</option>
               <option value="false">По убыванию</option>

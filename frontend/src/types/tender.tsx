@@ -15,21 +15,23 @@ export interface FilterValue {
   updateDateTo: string;
   executionDateStart: string;
   executionDateEnd: string;
+  latest?: boolean;
 }
 
 export interface TableValue {
+  id: number;
   title: string;
   link: string;
   customer: string;
   price: string;
-  contract_number: string;
-  purchase_objects: string;
-  contract_date: string;
-  execution_date: string;
-  publish_date: string;
-  update_date: string;
-  parsed_at: string;
-  parsed_by: string;
+  contractNumber: string;
+  purchaseObjects: string;
+  contractDate: string;
+  executionDate: string;
+  publishDate: string;
+  updateDate: string;
+  parsedAt: string;
+  parsedBy: string;
 }
 
 export interface ParseResponse {

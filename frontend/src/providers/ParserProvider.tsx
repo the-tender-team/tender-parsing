@@ -141,6 +141,46 @@ export const ParserProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         return { success: false, error }
       }
 
+      // Добавляем проверку и логирование данных
+      console.log('Received data from server:', data);
+      
+      if (!Array.isArray(data)) {
+        console.error('Server returned non-array data:', data);
+        notify({
+          title: 'Ошибка данных',
+          message: 'Неверный формат данных с сервера',
+          type: 'error'
+        });
+        return { success: false, error: 'Неверный формат данных' };
+      }
+
+      // Проверяем структуру каждого элемента
+      const isValidTender = (tender: any): tender is TableValue => {
+        return typeof tender === 'object' && tender !== null &&
+          typeof tender.id === 'number' &&
+          typeof tender.title === 'string' &&
+          typeof tender.link === 'string' &&
+          typeof tender.customer === 'string' &&
+          typeof tender.price === 'string' &&
+          typeof tender.contractNumber === 'string' &&
+          typeof tender.purchaseObjects === 'string' &&
+          typeof tender.contractDate === 'string' &&
+          typeof tender.executionDate === 'string' &&
+          typeof tender.publishDate === 'string' &&
+          typeof tender.updateDate === 'string' &&
+          typeof tender.parsedAt === 'string' &&
+          typeof tender.parsedBy === 'string';
+      };
+
+      if (!data.every(isValidTender)) {
+        console.error('Some tenders have invalid structure:', data.filter(t => !isValidTender(t)));
+        notify({
+          title: 'Предупреждение',
+          message: 'Некоторые данные могут отображаться некорректно',
+          type: 'error'
+        });
+      }
+
       return { success: true, data }
     } catch (error) {
       console.error('Network error in fetchTenders:', error)

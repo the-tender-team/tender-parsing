@@ -24,6 +24,18 @@ button {
   outline: none;               /* focus:outline-none (default state) */
   transition-property: box-shadow, border-color;
   transition-duration: 200ms;
+  min-width: 0;               /* Предотвращает выход за пределы контейнера */
+  font-size: 0.875rem;        /* text-sm */
+}
+
+.input-base[type="date"] {
+  min-width: 140px;          /* Минимальная ширина для полей с датами */
+  width: auto;               /* Автоматическая ширина */
+}
+
+select.input-base {
+  min-width: 140px;          /* Минимальная ширина для селектов */
+  width: auto;               /* Автоматическая ширина */
 }
 
 .input-base:focus {
@@ -148,25 +160,6 @@ button {
 .date-input::-webkit-calendar-picker-indicator {
   filter: invert(0.5);
   cursor: pointer;
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 10px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 10px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #555;
 }
 
 .table-col {

@@ -6,6 +6,7 @@ import { AuthProvider } from "@/providers/AuthProvider"
 import { UserProvider } from "@/providers/UserProvider"
 import { ControlProvider } from "@/providers/ControlProvider"
 import { ParserProvider } from '@/providers/ParserProvider'
+import { TenderProvider } from '@/providers/TenderProvider'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,7 +34,9 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
             <UserProvider>
               <ControlProvider>
                 <ParserProvider>
-                  {children}
+                  <TenderProvider>
+                    {children}
+                  </TenderProvider>
                 </ParserProvider>
               </ControlProvider>
             </UserProvider>

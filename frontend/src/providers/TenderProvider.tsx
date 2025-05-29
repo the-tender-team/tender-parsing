@@ -1,12 +1,13 @@
 'use client'
 
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext } from 'react'
 import { useNotification } from '@/libs/NotificationProvider'
-import { FilterValue, TableValue, ParseResponse, TenderContextType } from '@/types/tender'
+import { FilterValue, TableValue, ParseResponse, TenderContextType, TenderAnalysis } from '@/types/tender'
 
 const TenderContext = createContext<TenderContextType>({
   startParsing: async () => ({ success: false }),
-  fetchTenders: async () => ({ success: false })
+  fetchTenders: async () => ({ success: false }),
+  analyzeTender: async () => ({ success: false })
 })
 
 export function useTenders() {
@@ -15,11 +16,9 @@ export function useTenders() {
 
 export const TenderProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { notify } = useNotification()
-  const [loading, setLoading] = useState(false)
 
   const startParsing = async (filters: FilterValue): Promise<ParseResponse> => {
     try {
-      setLoading(true)
       const res = await fetch('/api/parse', {
         method: 'POST',
         headers: {
@@ -53,14 +52,11 @@ export const TenderProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         type: 'error'
       })
       return { success: false, error: errorMessage }
-    } finally {
-      setLoading(false)
     }
   }
 
   const fetchTenders = async (filters: FilterValue) => {
     try {
-      setLoading(true)
       const queryParams = new URLSearchParams()
       
       // Convert filters to query parameters
@@ -98,15 +94,45 @@ export const TenderProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         type: 'error'
       })
       return { success: false, error: errorMessage }
-    } finally {
-      setLoading(false)
     }
   }
+
+  const analyzeTender = async (tenderId: string, signal?: AbortSignal) => {
+    try {
+      const res = await fetch(`/api/tenders/${tenderId}/analyze`, {
+        method: 'POST',
+        credentials: 'include',
+        signal
+      });
+      
+      if (!res.ok) {
+        const error = await res.json();
+        notify({
+          title: 'Ошибка',
+          message: error.detail || 'Ошибка анализа тендера',
+          type: 'error'
+        });
+        return { success: false, error: error.detail || 'Ошибка анализа тендера' };
+      }
+      
+      const data = await res.json();
+      return { success: true, data };
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Ошибка анализа тендера';
+      notify({
+        title: 'Ошибка',
+        message: errorMessage,
+        type: 'error'
+      });
+      return { success: false, error: errorMessage };
+    }
+  };
 
   return (
     <TenderContext.Provider value={{
       startParsing,
-      fetchTenders
+      fetchTenders,
+      analyzeTender
     }}>
       {children}
     </TenderContext.Provider>
