@@ -6,8 +6,7 @@ import { useAuth } from '@/providers/AuthProvider'
 import Button from '@/components/Button'
 import Section from "../ModalSection"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCheck, faTimes, faSpinner, faSyncAlt } from '@fortawesome/free-solid-svg-icons'
-import { faUserEdit } from '@fortawesome/free-solid-svg-icons'
+import { faCheck, faTimes, faSpinner, faSyncAlt, faListUl } from '@fortawesome/free-solid-svg-icons'
 
 interface AdminRequest {
   id: number
@@ -65,7 +64,7 @@ export default function PanelTab() {
 
   return (
     <div className="p-6">
-      <Section icon={<FontAwesomeIcon icon={faUserEdit} />} title="Заявки на получение роли администратора">   
+      <Section icon={<FontAwesomeIcon icon={faListUl} />} title="Заявки на получение роли администратора">   
         <Button
           onClick={loadRequests}
           type="button"
@@ -86,10 +85,10 @@ export default function PanelTab() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-100">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Пользователь</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Дата заявки</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Статус</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Действия</th>
+                <th className="table-col">Ник</th>
+                <th className="table-col">Дата и время</th>
+                <th className="table-col">Статус</th>
+                <th className="table-col">Действия</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">

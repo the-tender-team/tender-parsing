@@ -2,12 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/providers/AuthProvider'
-import ModalWindow from './ModalWindow'
+import ModalWindow from '@/components/Window'
 import GeneralTab from './AccountTabs/GeneralTab'
 import SettingsTab from './AccountTabs/SettingsTab'
 import PanelTab from './AccountTabs/PanelTab'
 import IconButton from '@/components/IconButton'
-import { faHome, faCog, faUserShield } from '@fortawesome/free-solid-svg-icons'
+import { faHome, faSliders, faCog } from '@fortawesome/free-solid-svg-icons'
 
 type Tab = 'account' | 'settings' | 'panel'
 
@@ -52,7 +52,7 @@ export default function AccountModal({
       {user.role === 'owner' && (
         <IconButton
           onClick={() => setActiveTab('panel')}
-          icon={faUserShield}
+          icon={faSliders}
           title="Панель управления"
           tabKey="panel"
           activeTab={activeTab}

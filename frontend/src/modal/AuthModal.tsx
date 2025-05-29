@@ -6,11 +6,10 @@ import { useNotification } from '@/libs/NotificationProvider'
 import { validateAuthData } from '@/libs/validation'
 import { useAuth } from '@/providers/AuthProvider'
 import IconButton from '@/components/IconButton'
-import ModalWindow from './ModalWindow'
+import ModalWindow from '@/components/Window'
 import InputField from './ModalInputField'
 import Button from '@/components/Button'
-import { faSignInAlt, faUserPlus, faSpinner } from '@fortawesome/free-solid-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faSignInAlt, faUserPlus } from '@fortawesome/free-solid-svg-icons'
 
 type Tab = 'login' | 'register'
 

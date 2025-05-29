@@ -168,3 +168,13 @@ button {
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #555;
 }
+
+.table-col {
+  padding: 0.75rem 1.5rem;   /* py-3 px-6 */
+  text-align: left;          /* text-left */
+  font-size: 0.75rem;        /* text-xs (12px) */
+  font-weight: 500;          /* font-medium */
+  color: #6B7280;          /* text-gray-500 */
+  text-transform: uppercase; /* uppercase */
+  letter-spacing: 0.05em;    /* tracking-wider */
+}

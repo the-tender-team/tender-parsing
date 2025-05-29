@@ -6,7 +6,7 @@ import InfoField from '../ModalField'
 import Button from '../../components/Button'
 import Section from '../ModalSection'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSignOutAlt, faUserEdit } from '@fortawesome/free-solid-svg-icons'
+import { faSignOutAlt, faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 
 interface Props {
   onLogout: () => Promise<void>
@@ -23,7 +23,7 @@ export default function AccountTab({ onLogout }: Props) {
 
   return (
     <div className="p-6 space-y-6">
-      <Section icon={<FontAwesomeIcon icon={faUserEdit} />} title="Информация об аккаунте">        
+      <Section icon={<FontAwesomeIcon icon={faCircleInfo} />} title="Информация об аккаунте">        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
             <InfoField label="Имя пользователя" value={user?.username} />
