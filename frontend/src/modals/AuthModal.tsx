@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useNotification } from '@/libs/NotificationProvider'
 import { validateAuthData } from '@/libs/validation'
@@ -9,24 +9,36 @@ import IconButton from '@/components/IconButton'
 import ModalWindow from './ModalWindow'
 import InputField from './ModalInputField'
 import Button from '@/components/Button'
-import { faSignInAlt, faUserPlus } from '@fortawesome/free-solid-svg-icons'
+import { faSignInAlt, faUserPlus, faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 type Tab = 'login' | 'register'
+
+const defaultFormData = {
+  username: '',
+  password: '',
+  confirmPassword: ''
+}
 
 export default function AuthModal({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const router = useRouter()
   const { notify } = useNotification()
   const { login, register } = useAuth()
   
-  const [activeTab, setActiveTab] = useState<'login'|'register'>('login')
-  const [formData, setFormData] = useState({
-    username: '',
-    password: '',
-    confirmPassword: ''
-  })
-  const [error, setError] = useState('')
+  const [activeTab, setActiveTab] = useState<Tab>('login')
+  const [formData, setFormData] = useState(defaultFormData)
   const [isLoading, setIsLoading] = useState(false)
   const [isRegistering, setIsRegistering] = useState(false)
+
+  // При открытии окна сбрасываем форму
+  useEffect(() => {
+    if (isOpen) {
+      setFormData(defaultFormData)
+    } else {
+      // При закрытии окна сбрасываем таб
+      setActiveTab('login')
+    }
+  }, [isOpen])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target
@@ -35,7 +47,10 @@ export default function AuthModal({ isOpen, onClose }: { isOpen: boolean; onClos
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setError('')
+    
+    // Если уже идет загрузка, не делаем ничего
+    if (isLoading) return
+    
     setIsLoading(true)
 
     try {
@@ -46,38 +61,33 @@ export default function AuthModal({ isOpen, onClose }: { isOpen: boolean; onClos
       })
 
       if (!validationResult.isValid) {
-        setError(validationResult.error || 'Ошибка валидации')
+        notify({
+          title: 'Ошибка',
+          message: validationResult.error || 'Ошибка валидации',
+          type: 'error'
+        })
+        setIsLoading(false)
         return
       }
 
       if (activeTab === 'register') {
-        const { success, error } = await register(formData.username, formData.password)
+        const { success } = await register(formData.username, formData.password)
         if (success) {
-          notify({
-            title: 'Успешно',
-            message: 'Регистрация выполнена успешно',
-            type: 'success'
-          })
           onClose()
-        } else {
-          setError(error || 'Ошибка при регистрации')
         }
       } else {
-        const { success, error } = await login(formData.username, formData.password)
+        const { success } = await login(formData.username, formData.password)
         if (success) {
-          notify({
-            title: 'Успешно',
-            message: 'Вход выполнен успешно',
-            type: 'success'
-          })
           onClose()
-        } else {
-          setError(error || 'Ошибка при входе')
         }
       }
     } catch (error) {
       console.error('Auth error:', error)
-      setError(error instanceof Error ? error.message : 'Неизвестная ошибка')
+      notify({
+        title: 'Ошибка',
+        message: error instanceof Error ? error.message : 'Неизвестная ошибка',
+        type: 'error'
+      })
     } finally {
       setIsLoading(false)
     }
@@ -147,7 +157,9 @@ export default function AuthModal({ isOpen, onClose }: { isOpen: boolean; onClos
           <div className="flex justify-end">
             <Button
               type="submit"
-              variant="primary"
+              variant={isLoading ? "disabled" : "primary"}
+              disabled={isLoading}
+              isLoading={isLoading}
               className="w-full py-3"
             >
               {activeTab === 'login' ? 'Войти' : 'Зарегистрироваться'}

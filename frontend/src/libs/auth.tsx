@@ -9,16 +9,9 @@ export async function getUserFromBackend() {
   const token = await getTokenFromCookies()
   if (!token) return null
 
-  // Получаем все куки для дополнительных данных
-  const cookieStore = await cookies()
-  const cookieHeader = cookieStore.getAll()
-    .map(cookie => `${cookie.name}=${cookie.value}`)
-    .join('; ')
-
   const res = await apiFetch('/me', {
     headers: { 
-      'Cookie': cookieHeader,
-      'Authorization': `Bearer ${token}`  // Добавляем токен в заголовок Authorization
+      'Authorization': `Bearer ${token}`
     },
     cache: 'no-store'
   })

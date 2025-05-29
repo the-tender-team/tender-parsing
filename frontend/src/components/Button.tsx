@@ -2,6 +2,7 @@
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { IconDefinition } from '@fortawesome/free-solid-svg-icons'
+import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 
 interface ButtonProps {
   children?: React.ReactNode
@@ -13,6 +14,7 @@ interface ButtonProps {
   icon?: IconDefinition
   iconPosition?: 'left' | 'right'
   className?: string
+  isLoading?: boolean
 }
 
 const variantClasses = {
@@ -38,28 +40,38 @@ export default function Button({
   disabled = false,
   icon,
   iconPosition = 'left',
-  className = ''
+  className = '',
+  isLoading = false
 }: ButtonProps) {
+  // Если кнопка в состоянии загрузки, показываем спиннер вместо обычной иконки
+  const displayIcon = isLoading ? faSpinner : icon
+
   return (
     <button
       type={type}
       onClick={onClick}
-      disabled={disabled}
+      disabled={disabled || isLoading}
       className={`
         rounded-md font-medium transition-colors
         flex items-center justify-center gap-2
         ${variantClasses[variant]}
         ${sizeClasses[size]}
-        ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
+        ${(disabled || isLoading) ? 'opacity-50 cursor-not-allowed' : ''}
         ${className}
       `}
     >
-      {icon && iconPosition === 'left' && (
-        <FontAwesomeIcon icon={icon} />
+      {displayIcon && iconPosition === 'left' && (
+        <FontAwesomeIcon 
+          icon={displayIcon} 
+          className={isLoading ? 'animate-spin' : ''}
+        />
       )}
       {children}
-      {icon && iconPosition === 'right' && (
-        <FontAwesomeIcon icon={icon} />
+      {displayIcon && iconPosition === 'right' && (
+        <FontAwesomeIcon 
+          icon={displayIcon}
+          className={isLoading ? 'animate-spin' : ''}
+        />
       )}
     </button>
   )

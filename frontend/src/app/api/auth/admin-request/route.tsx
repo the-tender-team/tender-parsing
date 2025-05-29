@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
-import { cookies } from 'next/headers'
 import { apiFetch } from '@/libs/api'
-import { getUserFromBackend } from '@/libs/auth'
+import { getUserFromBackend, getTokenFromCookies } from '@/libs/auth'
 
 export async function POST() {
   try {
@@ -22,17 +21,14 @@ export async function POST() {
       )
     }
 
-    // Получаем куки для передачи на бэкенд
-    const cookieStore = await cookies()
-    const cookieHeader = cookieStore.getAll()
-      .map((cookie: { name: string, value: string }) => `${cookie.name}=${cookie.value}`)
-      .join('; ')
+    // Получаем токен для авторизации
+    const token = await getTokenFromCookies()
 
     // Отправляем запрос на бэкенд
     const res = await apiFetch('/admin-request', {
       method: 'POST',
       headers: {
-        'Cookie': cookieHeader
+        'Authorization': `Bearer ${token}`
       }
     })
 
