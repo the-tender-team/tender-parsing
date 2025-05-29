@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { useAdmin } from '@/providers/ControlProvider'
 import { useAuth } from '@/providers/AuthProvider'
 import Button from '@/components/Button'
-import Section from "../ModalSection"
+import Section from "../../components/ModalSection"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck, faTimes, faSpinner, faSyncAlt, faListUl } from '@fortawesome/free-solid-svg-icons'
 

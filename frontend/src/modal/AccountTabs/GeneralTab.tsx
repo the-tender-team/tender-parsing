@@ -2,9 +2,9 @@
 
 import { useAuth } from '@/providers/AuthProvider'
 import { formatDate } from '@/libs/formatDate'
-import InfoField from '../ModalField'
+import InfoField from '../../components/ModalField'
 import Button from '../../components/Button'
-import Section from '../ModalSection'
+import Section from '../../components/ModalSection'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSignOutAlt, faCircleInfo } from '@fortawesome/free-solid-svg-icons'
 

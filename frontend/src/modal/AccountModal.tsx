@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/providers/AuthProvider'
-import ModalWindow from '@/components/Window'
+import ModalWindow from '@/components/Modal'
 import GeneralTab from './AccountTabs/GeneralTab'
 import SettingsTab from './AccountTabs/SettingsTab'
 import PanelTab from './AccountTabs/PanelTab'
