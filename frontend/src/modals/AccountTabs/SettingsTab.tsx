@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useAuth } from '@/context/AuthProvider'
-import { useUser } from '@/context/UserProvider'
-import { useAdmin } from '@/context/AdminProvider'
+import { useAuth } from '@/providers/AuthProvider'
+import { useUser } from '@/providers/UserProvider'
+import { useAdmin } from '@/providers/ControlProvider'
 import InputField from '../ModalInputField'
 import Section from '../ModalSection'
 import Button from '../../components/Button'

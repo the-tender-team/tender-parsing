@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useAuth } from '@/context/AuthProvider'
+import { useAuth } from '@/providers/AuthProvider'
 import ModalWindow from './ModalWindow'
 import GeneralTab from './AccountTabs/GeneralTab'
 import SettingsTab from './AccountTabs/SettingsTab'

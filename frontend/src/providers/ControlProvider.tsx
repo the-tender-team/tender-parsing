@@ -27,7 +27,7 @@ export function useAdmin() {
   return useContext(AdminContext)
 }
 
-export const AdminProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+export const ControlProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { notify } = useNotification()
   const { user, refreshUser } = useAuth()
 

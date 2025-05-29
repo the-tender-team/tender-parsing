@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useAuth } from '@/context/AuthProvider'
+import { useAuth } from '@/providers/AuthProvider'
 import Filters from "./FilterPanel"
 import Table from "./TablePanel"
 import TableModal from './TableModal';

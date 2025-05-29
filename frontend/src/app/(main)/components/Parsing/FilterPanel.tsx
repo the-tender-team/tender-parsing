@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useAuth } from '@/context/AuthProvider';
-import { useParser } from '@/context/ParserProvider';
+import { useAuth } from '@/providers/AuthProvider';
+import { useParser } from '@/providers/ParserProvider';
 import { FilterValue } from '@/types/tender';
 import { faRedo, faFilter } from '@fortawesome/free-solid-svg-icons'
 import Button from '@/components/Button'

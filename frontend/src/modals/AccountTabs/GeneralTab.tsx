@@ -1,6 +1,6 @@
 'use client'
 
-import { useAuth } from '@/context/AuthProvider'
+import { useAuth } from '@/providers/AuthProvider'
 import { formatDate } from '@/libs/formatDate'
 import InfoField from '../ModalField'
 import Button from '../../components/Button'

@@ -1,8 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { useAdmin } from '@/context/AdminProvider'
-import { useAuth } from '@/context/AuthProvider'
+import { useAdmin } from '@/providers/ControlProvider'
+import { useAuth } from '@/providers/AuthProvider'
 import Button from '@/components/Button'
 import Section from "../ModalSection"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'

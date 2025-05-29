@@ -1,6 +1,6 @@
 'use client'
 import { useState, useEffect } from 'react'
-import { useAuth } from '@/context/AuthProvider'
+import { useAuth } from '@/providers/AuthProvider'
 import { useRouter } from 'next/navigation'
 import AccountModal from '../modals/AccountModal'
 import AuthModal from '../modals/AuthModal'

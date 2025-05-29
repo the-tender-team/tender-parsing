@@ -2,10 +2,10 @@ import { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
 import { NotificationProvider } from "@/libs/NotificationProvider"
-import { AuthProvider } from "@/context/AuthProvider"
-import { UserProvider } from "@/context/UserProvider"
-import { AdminProvider } from "@/context/AdminProvider"
-import { ParserProvider } from '@/context/ParserProvider'
+import { AuthProvider } from "@/providers/AuthProvider"
+import { UserProvider } from "@/providers/UserProvider"
+import { ControlProvider } from "@/providers/ControlProvider"
+import { ParserProvider } from '@/providers/ParserProvider'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,11 +31,11 @@ export default function RootLayout({ children, }: Readonly<{ children: React.Rea
         <NotificationProvider>
           <AuthProvider>
             <UserProvider>
-              <AdminProvider>
+              <ControlProvider>
                 <ParserProvider>
                   {children}
                 </ParserProvider>
-              </AdminProvider>
+              </ControlProvider>
             </UserProvider>
           </AuthProvider>
         </NotificationProvider>

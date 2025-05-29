@@ -1,31 +1,28 @@
 import { NextResponse } from 'next/server'
-import { headers } from 'next/headers'
 import { cookies } from 'next/headers'
 import { apiFetch } from '@/libs/api'
-import { getTokenFromCookies } from '@/libs/auth'
+import { getUserFromBackend } from '@/libs/auth'
 
 export async function POST() {
   try {
-    // Проверяем роль из заголовка, установленного middleware
-    const headersList = await headers()
-    const userRole = headersList.get('X-User-Role')
+    // Получаем данные пользователя
+    const userData = await getUserFromBackend()
     
-    if (!userRole) {
+    if (!userData) {
       return NextResponse.json(
         { detail: 'Необходима авторизация' },
         { status: 401 }
       )
     }
 
-    if (userRole !== 'user') {
+    if (userData.role !== 'user') {
       return NextResponse.json(
         { detail: 'Заявку могут подавать только пользователи' },
         { status: 403 }
       )
     }
 
-    // Получаем токен и куки
-    const token = await getTokenFromCookies()
+    // Получаем куки для передачи на бэкенд
     const cookieStore = await cookies()
     const cookieHeader = cookieStore.getAll()
       .map((cookie: { name: string, value: string }) => `${cookie.name}=${cookie.value}`)
@@ -35,8 +32,7 @@ export async function POST() {
     const res = await apiFetch('/admin-request', {
       method: 'POST',
       headers: {
-        'Cookie': cookieHeader,
-        'Authorization': `Bearer ${token}`
+        'Cookie': cookieHeader
       }
     })
 
