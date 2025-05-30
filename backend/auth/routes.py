@@ -46,7 +46,7 @@ def login(user: UserCreate, db: Session = Depends(get_db), response: Response = 
         key="access_token",
         value=token,
         httponly=True,
-        secure=True,
+        secure=False,
         samesite="Strict",
         max_age=3600
     )

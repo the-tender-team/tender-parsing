@@ -6,10 +6,14 @@ from database.fake_users import users_db
 from database.models import User
 from database.deps import get_db
 from sqlalchemy.orm import Session
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 # oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/form")
 
-SECRET_KEY = "секретный_ключ_сюда"
+SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
