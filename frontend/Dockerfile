@@ -12,8 +12,8 @@ RUN npm install
 COPY . .
 
 # 4. Опционально: пропускаем линтинг при сборке
-ENV NODE_ENV=production
-RUN npm run build || echo "Build completed with warnings"
+ENV NEXT_DISABLE_ESLINT=true
+RUN npm run build
 
 # 5. Запускаем
 EXPOSE 3000

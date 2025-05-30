@@ -100,7 +100,7 @@ async def parallel_ocr_async(doc) -> list[str]:
     return [res.split("|||", 1)[1] for res in sorted(results)]
 
 
-async def extract_text(pdf_url: str, use_ocr: bool = True) -> str | None:
+async def extract_text(pdf_url: str) -> str | None:
     try:
         start_all = time.time()
         response = requests.get(pdf_url, headers={'User-Agent': 'Mozilla/5.0'}, timeout=15)
@@ -117,8 +117,8 @@ async def extract_text(pdf_url: str, use_ocr: bool = True) -> str | None:
                     text_pages.append(f"--- Страница {page_num} ---\n{page_text}")
         except Exception as e:
             print(f"PyPDF2 ошибка: {e}")
-
-        if not text_pages or use_ocr:
+            
+        if not text_pages:
             print("OCR через Yandex API (асинхронно)...")
             pdf_bytes.seek(0)
             doc = fitz.open(stream=pdf_bytes.read(), filetype="pdf")
