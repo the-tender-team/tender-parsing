@@ -128,10 +128,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = async () => {
     try {
-      await fetch('/api/auth/logout', { 
+      const res = await fetch('/api/auth/logout', { 
         method: 'POST',
         credentials: 'include'
       })
+      
+      if (!res.ok) {
+        const data = await res.json()
+        if (res.status === 401) {
+          setUser(null)
+          setIsAuthenticated(false)
+          return
+        }
+        throw new Error(data.msg || 'Ошибка при выходе')
+      }
+      
       setUser(null)
       setIsAuthenticated(false)
       notify({ title: 'Успешно', message: 'Вы вышли из своего аккаунта.', type: 'success' })
