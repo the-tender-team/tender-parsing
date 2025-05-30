@@ -61,7 +61,7 @@ def parse_page(args: tuple[ParseFilters, int]):
             price = block.select_one(".price-block__value").get_text(strip=True)
             contractNumber = block.select_one(".registry-entry__body-value").get_text(strip=True).replace('\n', '').replace(' ', '').replace("№", "№ ")
             try:
-                purchaseObjects = block.select_one(".lots-wrap-content__body__val span span").get_text(strip=True)
+                purchaseObjects = block.select_one(".lots-wrap-content__body__val span span").get_text(strip=False)
             except Exception as e:
                 purchaseObjects = ""
             dates = block.select(".data-block__value")
