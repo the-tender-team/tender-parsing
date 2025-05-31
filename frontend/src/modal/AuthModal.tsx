@@ -124,48 +124,46 @@ export default function AuthModal({ isOpen, onClose }: { isOpen: boolean; onClos
       title={titleMap[activeTab]}
       iconButtons={iconButtons}
     >
-      <div className="p-6">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-4">
+          <InputField
+            id="username"
+            label="Имя пользователя"
+            type="text"
+            value={formData.username}
+            onChange={handleInputChange}
+          />
+          
+          <InputField
+            id="password"
+            label="Пароль"
+            type="password"
+            value={formData.password}
+            onChange={handleInputChange}
+          />
+          
+          {activeTab === 'register' && (
             <InputField
-              id="username"
-              label="Имя пользователя"
-              type="text"
-              value={formData.username}
-              onChange={handleInputChange}
-            />
-            
-            <InputField
-              id="password"
-              label="Пароль"
+              id="confirmPassword"
+              label="Повтор пароля"
               type="password"
-              value={formData.password}
+              value={formData.confirmPassword}
               onChange={handleInputChange}
             />
-            
-            {activeTab === 'register' && (
-              <InputField
-                id="confirmPassword"
-                label="Повтор пароля"
-                type="password"
-                value={formData.confirmPassword}
-                onChange={handleInputChange}
-              />
-            )}
-          </div>
-          <div className="flex justify-end">
-            <Button
-              type="submit"
-              variant={isLoading ? "disabled" : "primary"}
-              disabled={isLoading}
-              isLoading={isLoading}
-              className="w-full py-3"
-            >
-              {activeTab === 'login' ? 'Войти' : 'Зарегистрироваться'}
-            </Button>
-          </div>
-        </form>
-      </div>
+          )}
+        </div>
+        <div className="flex justify-end">
+          <Button
+            type="submit"
+            variant={isLoading ? "disabled" : "primary"}
+            disabled={isLoading}
+            isLoading={isLoading}
+            className="w-full py-3"
+          >
+            {activeTab === 'login' ? 'Войти' : 'Зарегистрироваться'}
+          </Button>
+        </div>
+      </form>
     </ModalWindow>
   )
 }

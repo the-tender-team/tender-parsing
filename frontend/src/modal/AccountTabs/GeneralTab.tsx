@@ -22,7 +22,7 @@ export default function AccountTab({ onLogout }: Props) {
   } as const
 
   return (
-    <div className="p-6 space-y-6">
+    <>
       <Section icon={<FontAwesomeIcon icon={faCircleInfo} />} title="Информация об аккаунте">        
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-4">
@@ -54,6 +54,6 @@ export default function AccountTab({ onLogout }: Props) {
           Выйти
         </Button>
       </div>
-    </div>
+    </>
   )
 }

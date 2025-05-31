@@ -63,7 +63,7 @@ export default function PanelTab() {
   const formatDate = (dateString: string) => new Date(dateString).toLocaleString('ru-RU')
 
   return (
-    <div className="p-6">
+    <>
       <Section icon={<FontAwesomeIcon icon={faListUl} />} title="Заявки на получение роли администратора">   
         <Button
           onClick={loadRequests}
@@ -85,7 +85,7 @@ export default function PanelTab() {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-100">
               <tr>
-                <th className="table-col">Ник</th>
+                <th className="table-col">Имя пользователя</th>
                 <th className="table-col">Дата и время</th>
                 <th className="table-col">Статус</th>
                 <th className="table-col">Действия</th>
@@ -140,6 +140,6 @@ export default function PanelTab() {
           </table>
         </div>
       )}
-    </div>
+    </>
   )
 }

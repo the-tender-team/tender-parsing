@@ -31,7 +31,7 @@ export default function ModalWindow({
 
   return (
     <div 
-      className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       onClick={handleBackdropClick}
     >
       <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg overflow-hidden max-h-[90vh] flex flex-col">
@@ -59,7 +59,9 @@ export default function ModalWindow({
         </div>
 
         {/* Content */}
-        <div className="overflow-y-auto flex-grow">{children}</div>
+        <div className="overflow-y-auto flex-grow max-h-[80vh] p-6 space-y-6">
+          {children}
+        </div>
       </div>
     </div>
   )

@@ -135,7 +135,7 @@ export default function SettingsTab({ userData }: Props) {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <>
       {/* Секция изменения имени пользователя */}
       <Section icon={<FontAwesomeIcon icon={faUserEdit} />} title="Изменение имени пользователя">
         <form onSubmit={handleSaveUsername} className="space-y-4">
@@ -218,6 +218,6 @@ export default function SettingsTab({ userData }: Props) {
           </Button>
         </Section>
       )}
-    </div>
+    </>
   )
 }
