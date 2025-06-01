@@ -6,7 +6,8 @@ import { useParser } from '@/providers/ParserProvider';
 import { useNotification } from '@/providers/NotificationProvider';
 import { FilterValue } from '@/types/tender';
 import Button from '@/components/Button'
-import { faRedo, faFilter } from '@fortawesome/free-solid-svg-icons'
+import Panel from '@/components/Panel'
+import { faRedo, faSearch } from '@fortawesome/free-solid-svg-icons'
 
 interface FilterPanelProps {
   setFilteredData: (data: any[]) => void;
@@ -300,8 +301,7 @@ export default function FilterPanel({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-4">Параметры</h2>
+    <Panel title="Параметры">
       {isAuthenticated && !canParse && (
         <div className="mb-4 p-4 bg-blue-50 text-blue-700 rounded-lg">
           Вы можете просматривать существующие данные. Для запуска нового парсинга необходимы права администратора.
@@ -544,12 +544,12 @@ export default function FilterPanel({
           onClick={applyFilters}
           type="submit"
           variant="primary"
-          icon={faFilter}
+          icon={faSearch}
           disabled={isLoading}
         >
-          Применить
+          Поиск
         </Button>
       </div>
-    </div>
+    </Panel>
   );
 }
