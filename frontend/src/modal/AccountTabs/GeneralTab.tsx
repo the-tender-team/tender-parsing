@@ -19,7 +19,7 @@ export default function AccountTab({ onLogout }: Props) {
   const roles = {
     owner: 'Владелец',
     admin: 'Администратор',
-    user: 'Пользователь'
+    user: 'Посетитель'
   } as const
 
   const handleLogout = async () => {
@@ -33,9 +33,9 @@ export default function AccountTab({ onLogout }: Props) {
 
   return (
     <>
-      <Section icon={<FontAwesomeIcon icon={faCircleInfo} />} title="Информация об аккаунте">        
-        <div className="grid grid-cols-2 gap-4">
-          <InfoField label="Имя пользователя" value={user?.username} />
+      <Section icon={<FontAwesomeIcon icon={faCircleInfo} />} title="Информация о пользователе">        
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <InfoField label="Имя" value={user?.username} />
           <InfoField 
             label="Роль" 
             value={user?.role ? roles[user.role as keyof typeof roles] : undefined} 

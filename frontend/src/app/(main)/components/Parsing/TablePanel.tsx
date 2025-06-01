@@ -162,7 +162,7 @@ export default function ContractTable({
       </Table>
       
       <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-nowrap min-w-[200px]">
           {data.length > 0 && (
             <>
               <Button
@@ -181,7 +181,7 @@ export default function ContractTable({
                 icon={faChevronRight}
                 size="sm"
               />
-              <span className="text-sm text-gray-600 ml-3">
+              <span className="text-sm text-gray-600 ml-3 whitespace-nowrap">
                 <span className="hidden sm:inline">Страница </span>
                 {currentPage} из {totalPages || 1}
               </span>
@@ -194,7 +194,6 @@ export default function ContractTable({
             variant="subprimary"
             type="button"
             icon={faHistory}
-            className="sm:w-auto w-12"
           >
             Сохранённая
           </Button>
@@ -203,7 +202,6 @@ export default function ContractTable({
             variant="primary"
             type="button"
             icon={faSearch}
-            className="sm:w-auto w-12"
           >
             Новая
           </Button>

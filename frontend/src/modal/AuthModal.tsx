@@ -161,6 +161,7 @@ export default function AuthModal({ isOpen, onClose }: { isOpen: boolean; onClos
             type="submit"
             variant={isLoading ? "disabled" : "primary"}
             disabled={isLoading}
+            icon={activeTab === 'login' ? faSignInAlt : faUserPlus}
           >
             {activeTab === 'login' ? 'Войти' : 'Зарегистрироваться'}
           </Button>

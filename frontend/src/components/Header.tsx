@@ -69,15 +69,18 @@ export default function Header() {
           
           {/* Логотип (левая часть) */}
           <div 
-            className="flex items-center space-x-2 cursor-pointer flex-shrink-0 mr-4"
+            className="flex items-center space-x-2 cursor-pointer flex-shrink-0 mr-2"
             onClick={() => router.push('/')}
           >
             <FontAwesomeIcon icon={faSearch} className="text-xl md:text-2xl" />
-            <span className="text-xl md:text-xl font-semibold whitespace-nowrap">Tender Parsing</span>
+            <span className="text-xl font-semibold whitespace-nowrap">
+              <span className="sm:hidden">TP</span>
+              <span className="hidden sm:inline">Tender Parsing</span>
+            </span>
           </div>
 
           {/* Центральное меню */}
-          <div className="hidden md:flex flex-1 justify-center mx-4 min-w-0">
+          <div className="hidden md:flex flex-1 justify-center mx-2 min-w-0">
             <nav className="flex space-x-4 md:space-x-6">
               {navItems.map((item) => {
                 const isActive = activeSection === item.id
@@ -103,7 +106,7 @@ export default function Header() {
           </div>
 
           {/* Правая часть (кнопки) */}
-          <div className="flex items-center gap-2 flex-shrink-0 ml-4">
+          <div className="flex items-center gap-1 flex-shrink-0 ml-2">
             <Button
               variant="primary"
               type="button"
