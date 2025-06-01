@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext } from 'react'
 import { useNotification } from '@/providers/NotificationProvider'
-import { useAuth } from './AuthProvider'
+import { useAuth } from '@/providers/AuthProvider'
 
 interface AdminRequest {
   id: number

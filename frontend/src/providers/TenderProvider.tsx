@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext } from 'react'
 import { useNotification } from '@/providers/NotificationProvider'
-import { FilterValue, TableValue, ParseResponse, TenderContextType, TenderAnalysis } from '@/types/tender'
+import { FilterValue, ParseResponse, TenderContextType } from '@/types/tender'
 
 const TenderContext = createContext<TenderContextType>({
   startParsing: async () => ({ success: false }),
