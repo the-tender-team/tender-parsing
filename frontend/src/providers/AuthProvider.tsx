@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { useNotification } from '@/libs/NotificationProvider'
+import { useNotification } from '@/providers/NotificationProvider'
 
 interface User {
   username: string

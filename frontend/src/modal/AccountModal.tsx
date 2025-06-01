@@ -27,6 +27,12 @@ export default function AccountModal({
     }
   }, [isOpen, user, onClose])
 
+  useEffect(() => {
+    if (!isOpen) {
+      setActiveTab('account')
+    }
+  }, [isOpen])
+
   if (!isOpen || !user) return null
 
   const renderTab = () => {

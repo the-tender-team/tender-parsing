@@ -2,7 +2,6 @@
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { IconDefinition } from '@fortawesome/free-solid-svg-icons'
-import { faSpinner } from '@fortawesome/free-solid-svg-icons'
 
 interface ButtonProps {
   children?: React.ReactNode
@@ -14,7 +13,7 @@ interface ButtonProps {
   icon?: IconDefinition
   iconPosition?: 'left' | 'right'
   className?: string
-  isLoading?: boolean
+  title?: string
 }
 
 const variantClasses = {
@@ -26,9 +25,9 @@ const variantClasses = {
 }
 
 const sizeClasses = {
-  sm: 'px-3 py-1.5 text-sm',
-  md: 'px-4 py-2 text-base',
-  lg: 'px-6 py-3 text-lg'
+  sm: 'px-3 py-1.5 text-sm min-w-[32px] h-8',
+  md: 'px-4 py-2 text-base min-w-[40px] h-10',
+  lg: 'px-6 py-3 text-lg min-w-[48px] h-12'
 }
 
 export default function Button({
@@ -41,36 +40,41 @@ export default function Button({
   icon,
   iconPosition = 'left',
   className = '',
-  isLoading = false
+  title
 }: ButtonProps) {
-  // Если кнопка в состоянии загрузки, показываем спиннер вместо обычной иконки
-  const displayIcon = isLoading ? faSpinner : icon
+  const hasContent = Boolean(children)
 
   return (
     <button
       type={type}
       onClick={onClick}
-      disabled={disabled || isLoading}
+      disabled={disabled}
+      title={title}
       className={`
         rounded-md font-medium transition-colors
         flex items-center justify-center gap-2
+        ${hasContent ? 'sm:w-auto w-12' : 'w-12'}
         ${variantClasses[variant]}
         ${sizeClasses[size]}
-        ${(disabled || isLoading) ? 'opacity-50 cursor-not-allowed' : ''}
+        ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
         ${className}
       `}
     >
-      {displayIcon && iconPosition === 'left' && (
+      {icon && iconPosition === 'left' && (
         <FontAwesomeIcon 
-          icon={displayIcon} 
-          className={isLoading ? 'animate-spin' : ''}
+          icon={icon}
+          className={`${!hasContent ? 'w-5 h-5' : ''}`}
         />
       )}
-      {children}
-      {displayIcon && iconPosition === 'right' && (
+      {hasContent && (
+        <div className="hidden sm:block">
+          {children}
+        </div>
+      )}
+      {icon && iconPosition === 'right' && (
         <FontAwesomeIcon 
-          icon={displayIcon}
-          className={isLoading ? 'animate-spin' : ''}
+          icon={icon}
+          className={`${!hasContent ? 'w-5 h-5' : ''}`}
         />
       )}
     </button>
