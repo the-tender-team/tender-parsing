@@ -2,14 +2,15 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useNotification } from '@/libs/NotificationProvider'
+import { useNotification } from '@/providers/NotificationProvider'
 import { validateAuthData } from '@/libs/validation'
 import { useAuth } from '@/providers/AuthProvider'
 import IconButton from '@/components/IconButton'
 import ModalWindow from '@/components/Modal'
 import InputField from './ModalInputField'
 import Button from '@/components/Button'
-import { faSignInAlt, faUserPlus } from '@fortawesome/free-solid-svg-icons'
+import { faSignInAlt, faUserPlus, faSpinner } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 type Tab = 'login' | 'register'
 
@@ -124,48 +125,47 @@ export default function AuthModal({ isOpen, onClose }: { isOpen: boolean; onClos
       title={titleMap[activeTab]}
       iconButtons={iconButtons}
     >
-      <div className="p-6">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="space-y-4">
+          <InputField
+            id="username"
+            label="Имя пользователя"
+            type="text"
+            value={formData.username}
+            onChange={handleInputChange}
+          />
+          
+          <InputField
+            id="password"
+            label="Пароль"
+            type="password"
+            value={formData.password}
+            onChange={handleInputChange}
+          />
+          
+          {activeTab === 'register' && (
             <InputField
-              id="username"
-              label="Имя пользователя"
-              type="text"
-              value={formData.username}
-              onChange={handleInputChange}
-            />
-            
-            <InputField
-              id="password"
-              label="Пароль"
+              id="confirmPassword"
+              label="Повтор пароля"
               type="password"
-              value={formData.password}
+              value={formData.confirmPassword}
               onChange={handleInputChange}
             />
-            
-            {activeTab === 'register' && (
-              <InputField
-                id="confirmPassword"
-                label="Повтор пароля"
-                type="password"
-                value={formData.confirmPassword}
-                onChange={handleInputChange}
-              />
-            )}
-          </div>
-          <div className="flex justify-end">
-            <Button
-              type="submit"
-              variant={isLoading ? "disabled" : "primary"}
-              disabled={isLoading}
-              isLoading={isLoading}
-              className="w-full py-3"
-            >
-              {activeTab === 'login' ? 'Войти' : 'Зарегистрироваться'}
-            </Button>
-          </div>
-        </form>
-      </div>
+          )}
+        </div>
+        <div className="flex justify-end items-center gap-2">
+          {isLoading && (
+            <FontAwesomeIcon icon={faSpinner} className="text-indigo-600 animate-spin text-xl" />
+          )}
+          <Button
+            type="submit"
+            variant={isLoading ? "disabled" : "primary"}
+            disabled={isLoading}
+          >
+            {activeTab === 'login' ? 'Войти' : 'Зарегистрироваться'}
+          </Button>
+        </div>
+      </form>
     </ModalWindow>
   )
 }

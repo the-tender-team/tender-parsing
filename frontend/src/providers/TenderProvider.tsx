@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, useContext } from 'react'
-import { useNotification } from '@/libs/NotificationProvider'
+import { useNotification } from '@/providers/NotificationProvider'
 import { FilterValue, TableValue, ParseResponse, TenderContextType, TenderAnalysis } from '@/types/tender'
 
 const TenderContext = createContext<TenderContextType>({
