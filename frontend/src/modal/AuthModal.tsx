@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { useNotification } from '@/libs/NotificationProvider'
+import { useNotification } from '@/providers/NotificationProvider'
 import { validateAuthData } from '@/libs/validation'
 import { useAuth } from '@/providers/AuthProvider'
 import IconButton from '@/components/IconButton'
