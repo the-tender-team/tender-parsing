@@ -4,8 +4,9 @@ import { useEffect, } from 'react';
 import { TableValue, FilterValue } from '@/types/tender';
 import Button from '@/components/Button';
 import Table from '@/components/Table';
+import Panel from '@/components/Panel';
 import { useTenders } from '@/providers/TenderProvider';
-import { faChevronLeft, faChevronRight, faSearch, faHistory, faChartLine } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faChevronRight, faHistory, faDownload, faChartLine } from '@fortawesome/free-solid-svg-icons';
 
 // Функция для парсинга цены
 const parsePrice = (priceStr: string): number => {
@@ -93,120 +94,120 @@ export default function ContractTable({
   ];
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
-      <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-        <h2 className="text-2xl font-semibold text-gray-800">Таблица</h2>
-        <div className="text-sm text-gray-500">Найдено {data.length} контрактов</div>
-      </div>
-      
-      <Table 
-        headers={headers}
-        emptyMessage={data.length === 0 ? 'Таблица пустая. Загрузите сохранённую или новую.' : 'Согласно выставленным критериям ничего не найдено.'}
-        isLoading={isLoading}
-        loadingMessage="Выполняется парсинг тендеров..."
-      >
-        {paginatedData.map((item, index) => (
-          <tr key={index} className="hover:bg-gray-50">
-            <td className="px-6 py-4 whitespace-nowrap">
-              <a 
-                href={item.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm font-medium text-indigo-600 hover:underline"
-              >
-                {item.title}
-              </a>
-            </td>
-            <td className="px-6 py-4 min-w-[400px]">
-              <div className="text-sm text-gray-900 break-words">{item.customer}</div>
-            </td>
-            <td className="px-6 py-4 whitespace-nowrap">
-              <div className="text-sm text-gray-900">
-                {parsePrice(item.price).toLocaleString('ru-RU')} ₽
-              </div>
-            </td>
-            <td className="px-6 py-4 whitespace-nowrap">
-              <div className="text-sm text-gray-900">{item.contractNumber}</div>
-            </td>
-            <td className="px-6 py-4 min-w-[400px]">
-              <div className="text-sm text-gray-900 break-words">{item.purchaseObjects}</div>
-            </td>
-            <td className="px-6 py-4 whitespace-nowrap">
-              <div className="text-sm text-gray-900">{item.contractDate}</div>
-            </td>
-            <td className="px-6 py-4 whitespace-nowrap">
-              <div className="text-sm text-gray-900">{item.executionDate}</div>
-            </td>
-            <td className="px-6 py-4 whitespace-nowrap">
-              <div className="text-sm text-gray-900">{item.publishDate}</div>
-            </td>
-            <td className="px-6 py-4 whitespace-nowrap">
-              <div className="text-sm text-gray-900">{item.updateDate}</div>
-            </td>
-            <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-              <Button
-                onClick={() => {
-                  console.log('Opening analysis for tender:', item);
-                  showContractDetails(item);
-                }}
-                variant="primary"
-                type="button"
-                size="sm"
-                icon={faChartLine}
-              >
-                Анализ
-              </Button>
-            </td>
-          </tr>
-        ))}
-      </Table>
-      
-      <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
-        <div className="flex items-center gap-2 flex-nowrap min-w-[200px]">
-          {data.length > 0 && (
-            <>
-              <Button
-                onClick={goToPrevPage} 
-                disabled={currentPage === 1}
-                variant="subprimary"
-                type="button"
-                icon={faChevronLeft}
-                size="sm"
-              />
-              <Button
-                onClick={goToNextPage}
-                disabled={currentPage === totalPages || totalPages === 0}
-                variant="subprimary"
-                type="button"
-                icon={faChevronRight}
-                size="sm"
-              />
-              <span className="text-sm text-gray-600 ml-3 whitespace-nowrap">
-                <span className="hidden sm:inline">Страница </span>
-                {currentPage} из {totalPages || 1}
-              </span>
-            </>
-          )}
+    <Panel 
+      title="Таблица" 
+      titleExtra={<div className="text-sm text-gray-500">Найдено {data.length} контрактов</div>}
+    >
+      <div className="-mx-6">
+        <Table 
+          headers={headers}
+          emptyMessage={data.length === 0 ? 'Таблица пустая. Загрузите сохранённую или новую.' : 'Согласно выставленным критериям ничего не найдено.'}
+          isLoading={isLoading}
+          loadingMessage="Выполняется парсинг тендеров..."
+        >
+          {paginatedData.map((item, index) => (
+            <tr key={index} className="hover:bg-gray-50">
+              <td className="px-6 py-4 whitespace-nowrap">
+                <a 
+                  href={item.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm font-medium text-indigo-600 hover:underline"
+                >
+                  {item.title}
+                </a>
+              </td>
+              <td className="px-6 py-4 min-w-[400px]">
+                <div className="text-sm text-gray-900 break-words">{item.customer}</div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="text-sm text-gray-900">
+                  {parsePrice(item.price).toLocaleString('ru-RU')} ₽
+                </div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="text-sm text-gray-900">{item.contractNumber}</div>
+              </td>
+              <td className="px-6 py-4 min-w-[400px]">
+                <div className="text-sm text-gray-900 break-words">{item.purchaseObjects}</div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="text-sm text-gray-900">{item.contractDate}</div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="text-sm text-gray-900">{item.executionDate}</div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="text-sm text-gray-900">{item.publishDate}</div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap">
+                <div className="text-sm text-gray-900">{item.updateDate}</div>
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                <Button
+                  onClick={() => {
+                    console.log('Opening analysis for tender:', item);
+                    showContractDetails(item);
+                  }}
+                  variant="primary"
+                  type="button"
+                  size="sm"
+                  icon={faChartLine}
+                >
+                  Анализ
+                </Button>
+              </td>
+            </tr>
+          ))}
+        </Table>
+        
+        <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+          <div className="flex items-center gap-2 flex-nowrap min-w-[200px]">
+            {data.length > 0 && (
+              <>
+                <Button
+                  onClick={goToPrevPage} 
+                  disabled={currentPage === 1}
+                  variant="subprimary"
+                  type="button"
+                  icon={faChevronLeft}
+                  size="sm"
+                />
+                <Button
+                  onClick={goToNextPage}
+                  disabled={currentPage === totalPages || totalPages === 0}
+                  variant="subprimary"
+                  type="button"
+                  icon={faChevronRight}
+                  size="sm"
+                />
+                <span className="text-sm text-gray-600 ml-3 whitespace-nowrap">
+                  <span className="hidden sm:inline">Страница </span>
+                  {currentPage} из {totalPages || 1}
+                </span>
+              </>
+            )}
+          </div>
+          <div className="flex gap-2">
+            <Button
+              onClick={fetchLatestTenders}
+              variant="subprimary"
+              type="button"
+              icon={faHistory}
+            >
+              Сохранённая
+            </Button>
+            <Button
+              onClick={fetchNewTenders}
+              variant="primary"
+              type="button"
+              icon={faDownload}
+            >
+              Новая
+            </Button>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <Button
-            onClick={fetchLatestTenders}
-            variant="subprimary"
-            type="button"
-            icon={faHistory}
-          >
-            Сохранённая
-          </Button>
-          <Button
-            onClick={fetchNewTenders}
-            variant="primary"
-            type="button"
-            icon={faSearch}
-          >
-            Новая
-          </Button>
-        </div>
       </div>
-    </div>
+    </Panel>
   );
 }
