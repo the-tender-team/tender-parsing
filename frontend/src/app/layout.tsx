@@ -58,8 +58,6 @@ export const metadata: Metadata = {
   other: {
     'msapplication-TileColor': '#ffffff',
     'msapplication-TileImage': '/android-chrome-192x192.png',
-    'yandex-verification': '274cf265ce44da11',
-    'google-site-verification': '',
   }
 }
 
