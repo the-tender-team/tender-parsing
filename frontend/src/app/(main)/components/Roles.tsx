@@ -11,7 +11,7 @@ const permissions = {
 const roles = [
   {
     title: 'Посетитель',
-    description: 'Ознакомление с результатами сканирования и запрос роли администратора в личном кабинете.',
+    description: 'Ознакомление с результатами парсинга и запрос роли администратора в личном кабинете.',
     icon: <FaChartPie className="text-sky-500 text-xl" />,
     bgColor: 'bg-sky-100',
     borderColor: 'border-t-sky-500',
@@ -24,7 +24,7 @@ const roles = [
   },
   {
     title: 'Администратор',
-    description: 'Полный доступ к инстументам для самостоятельного сканирования.',
+    description: 'Полный доступ к инстументам для самостоятельного парсинга.',
     icon: <FaUserShield className="text-green-500 text-xl" />,
     bgColor: 'bg-green-100',
     borderColor: 'border-t-green-500',
