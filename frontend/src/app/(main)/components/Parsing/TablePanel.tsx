@@ -1,8 +1,7 @@
 'use client';
 
 import { TableValue, FilterValue } from '@/types/tender';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye, faExternalLinkAlt, faChevronLeft, faChevronRight, faSearch, faHistory, faChartLine } from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft, faChevronRight, faSearch, faHistory, faChartLine } from '@fortawesome/free-solid-svg-icons';
 import Button from '@/components/Button';
 import Table from '@/components/Table';
 import { useTenders } from '@/providers/TenderProvider';
@@ -22,6 +21,7 @@ interface ContractTableProps {
   showContractDetails: (contract: TableValue) => void;
   setFilteredData: (data: TableValue[]) => void;
   currentFilters: FilterValue;
+  isLoading: boolean;
 }
 
 export default function ContractTable({ 
@@ -31,10 +31,10 @@ export default function ContractTable({
   setCurrentPage, 
   showContractDetails,
   setFilteredData,
-  currentFilters
+  currentFilters,
+  isLoading
 }: ContractTableProps) {
   const { fetchTenders } = useTenders();
-  const [isLoading, setIsLoading] = useState(false);
   
   useEffect(() => {
     console.log('Table data:', data);
@@ -60,34 +60,22 @@ export default function ContractTable({
     }
   };
 
-  const goToPage = (page: number) => {
-    setCurrentPage(page);
-  };
-
   const fetchNewTenders = async () => {
-    setIsLoading(true);
-    try {
-      const { success, data } = await fetchTenders(currentFilters);
-      if (success && data) {
-        setFilteredData(data);
-      }
-    } finally {
-      setIsLoading(false);
+    setFilteredData([]);
+    const { success, data } = await fetchTenders(currentFilters);
+    if (success && data) {
+      setFilteredData(data);
     }
   };
 
   const fetchLatestTenders = async () => {
-    setIsLoading(true);
-    try {
-      const { success, data } = await fetchTenders({
-        ...currentFilters,
-        latest: true
-      });
-      if (success && data) {
-        setFilteredData(data);
-      }
-    } finally {
-      setIsLoading(false);
+    setFilteredData([]);
+    const { success, data } = await fetchTenders({
+      ...currentFilters,
+      latest: true
+    });
+    if (success && data) {
+      setFilteredData(data);
     }
   };
 
@@ -107,7 +95,7 @@ export default function ContractTable({
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden">
       <div className="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-        <h2 className="text-2xl font-semibold text-gray-800">Результаты</h2>
+        <h2 className="text-2xl font-semibold text-gray-800">Таблица</h2>
         <div className="text-sm text-gray-500">Найдено {data.length} контрактов</div>
       </div>
       
@@ -115,6 +103,7 @@ export default function ContractTable({
         headers={headers}
         emptyMessage={data.length === 0 ? 'Таблица пустая. Загрузите сохранённую или новую.' : 'Согласно выставленным критериям ничего не найдено.'}
         isLoading={isLoading}
+        loadingMessage="Выполняется парсинг тендеров..."
       >
         {paginatedData.map((item, index) => (
           <tr key={index} className="hover:bg-gray-50">

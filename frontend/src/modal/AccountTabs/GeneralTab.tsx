@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useAuth } from '@/providers/AuthProvider'
-import { formatDate } from '@/libs/formatDate'
 import InfoField from '../../components/ModalField'
 import Button from '../../components/Button'
 import Section from '../../components/ModalSection'
@@ -35,22 +34,12 @@ export default function AccountTab({ onLogout }: Props) {
   return (
     <>
       <Section icon={<FontAwesomeIcon icon={faCircleInfo} />} title="Информация об аккаунте">        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <InfoField label="Имя пользователя" value={user?.username} />
-            <InfoField 
-              label="Роль" 
-              value={user?.role ? roles[user.role as keyof typeof roles] : undefined} 
-            />
-          </div>
-          
-          <div className="space-y-4">
-            <InfoField
-              label="Дата и время регистрации"
-              value={user?.createdAt ? formatDate(user.createdAt) : undefined}
-            />
-            <InfoField label="ID" value={user?.id?.toString()} />
-          </div>
+        <div className="grid grid-cols-2 gap-4">
+          <InfoField label="Имя пользователя" value={user?.username} />
+          <InfoField 
+            label="Роль" 
+            value={user?.role ? roles[user.role as keyof typeof roles] : undefined} 
+          />
         </div>
       </Section>
 

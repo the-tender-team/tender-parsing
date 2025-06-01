@@ -7,12 +7,7 @@ import ModalSection from "@/components/ModalSection";
 import ModalField from "@/components/ModalField";
 import { faFileAlt, faSearch, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
-// Функция для парсинга цены
-const parsePrice = (priceStr: string): number => {
-  if (!priceStr) return 0;
-  return parseFloat(priceStr.replace('₽', '').replace(/\s/g, '').replace(',', '.'));
-};
+import { formatDate } from '@/libs/formatDate';
 
 interface ContractModalProps {
   contract: TableValue;
@@ -61,7 +56,7 @@ export default function ContractModal({
             />
             <ModalField
               label="Цена"
-              value={`${parsePrice(contract.price).toLocaleString('ru-RU')} ₽`}
+              value={`${parseFloat(contract.price.replace('₽', '').replace(/\s/g, '').replace(',', '.')).toLocaleString('ru-RU')} ₽`}
             />
             <ModalField
               label="Дата заключения"
@@ -85,16 +80,16 @@ export default function ContractModal({
             value={contract.customer}
           />
           <ModalField
-            label="Объект закупки"
+            label="Первый объект закупки"
             value={contract.purchaseObjects}
           />
           <div className="grid grid-cols-2 gap-4">
             <ModalField
-              label="Дата парсинга"
-              value={contract.parsedAt || 'Не указана'}
+              label="Дата и время парсинга"
+              value={contract.parsedAt ? formatDate(contract.parsedAt) : 'Не указана'}
             />
             <ModalField
-              label="Кем спарсено"
+              label="Автор парсинга"
               value={contract.parsedBy || 'Не указано'}
             />
           </div>
@@ -108,7 +103,7 @@ export default function ContractModal({
         {loading ? (
           <div className="flex flex-col items-center justify-center py-8">
             <FontAwesomeIcon icon={faSpinner} className="text-4xl text-indigo-600 animate-spin mb-4" />
-            <p className="text-gray-500">Выполняется анализ тендера</p>
+            <p className="text-gray-500">Выполняется анализ тендера...</p>
           </div>
         ) : error ? (
           <div className="text-center text-red-500">
@@ -119,7 +114,7 @@ export default function ContractModal({
             <ReactMarkdown>{analysis.analysis}</ReactMarkdown>
             {analysis.cached && (
               <p className="mt-4 text-sm text-gray-500">
-                Анализ был загружен из кэша
+                Анализ был загружен из базы данных.
               </p>
             )}
           </div>

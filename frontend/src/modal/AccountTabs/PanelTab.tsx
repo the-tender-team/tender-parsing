@@ -81,45 +81,42 @@ export default function PanelTab() {
         headers={headers}
         emptyMessage="Нет активных заявок"
         isLoading={loading}
+        loadingMessage="Загрузка заявок..."
       >
         {requests.map((request) => (
           <tr key={request.id}>
             <td className="px-6 py-4 whitespace-nowrap font-medium text-gray-900">{request.username}</td>
             <td className="px-6 py-4 whitespace-nowrap text-gray-500">{formatDate(request.created_at)}</td>
             <td className="px-6 py-4 whitespace-nowrap">
-              <span className={`px-2 inline-flex text-xs font-semibold rounded-full ${
-                request.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                request.status === 'approved' ? 'bg-green-100 text-green-800' :
-                'bg-red-100 text-red-800'
-              }`}>
-                {request.status === 'pending' ? 'На рассмотрении' : 
-                  request.status === 'approved' ? 'Одобрено' : 'Отклонено'}
-              </span>
+              {processing === request.username ? (
+                <FontAwesomeIcon icon={faSpinner} className="animate-spin text-indigo-600" />
+              ) : (
+                <span className={`px-2 inline-flex text-xs font-semibold rounded-full ${
+                  request.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                  request.status === 'approved' ? 'bg-green-100 text-green-800' :
+                  'bg-red-100 text-red-800'
+                }`}>
+                  {request.status === 'pending' ? 'На рассмотрении' : 
+                    request.status === 'approved' ? 'Одобрено' : 'Отклонено'}
+                </span>
+              )}
             </td>
-            <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+            <td className="px-6 py-4 whitespace-nowrap text-center">
               {request.status === 'pending' && (
-                <div className="flex gap-2 justify-end">
+                <div className="flex gap-2 justify-center">
                   <button
                     onClick={() => handleAction(request.username, 'approve')}
                     disabled={processing === request.username}
-                    className="text-green-600 hover:text-green-900 disabled:opacity-50"
+                    className="text-green-600 hover:text-green-900 disabled:opacity-50 text-xl"
                   >
-                    {processing === request.username ? (
-                      <FontAwesomeIcon icon={faSpinner} className="animate-spin" />
-                    ) : (
-                      <FontAwesomeIcon icon={faCheck} />
-                    )}
+                    <FontAwesomeIcon icon={faCheck} />
                   </button>
                   <button
                     onClick={() => handleAction(request.username, 'reject')}
                     disabled={processing === request.username}
-                    className="text-red-600 hover:text-red-900 disabled:opacity-50"
+                    className="text-red-600 hover:text-red-900 disabled:opacity-50 text-xl"
                   >
-                    {processing === request.username ? (
-                      <FontAwesomeIcon icon={faSpinner} className="animate-spin" />
-                    ) : (
-                      <FontAwesomeIcon icon={faTimes} />
-                    )}
+                    <FontAwesomeIcon icon={faTimes} />
                   </button>
                 </div>
               )}

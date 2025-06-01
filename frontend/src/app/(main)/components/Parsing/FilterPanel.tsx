@@ -3,28 +3,38 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/providers/AuthProvider';
 import { useParser } from '@/providers/ParserProvider';
-import { FilterValue } from '@/types/tender';
-import { faRedo, faFilter, faChartLine, faCalendarDays, faCalendarPlus, faMoneyBill } from '@fortawesome/free-solid-svg-icons'
+import { FilterValue } from './parsing';
+import { faRedo, faFilter } from '@fortawesome/free-solid-svg-icons'
 import Button from '@/components/Button'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useNotification } from '@/providers/NotificationProvider';
 
 interface FilterPanelProps {
   setFilteredData: (data: any[]) => void;
   setCurrentPageNumber: (page: number) => void;
   setCurrentFilters: (filters: FilterValue) => void;
+  setTableLoading: (isLoading: boolean) => void;
 }
 
-const sortOptions = [
-  { value: 1, label: 'По дате обновления', icon: faCalendarDays },
-  { value: 2, label: 'По дате публикации', icon: faCalendarPlus },
-  { value: 3, label: 'По цене', icon: faMoneyBill },
-  { value: 4, label: 'По релевантности', icon: faChartLine },
-];
+const formatDateToRussian = (dateStr: string): string => {
+  if (!dateStr) return '';
+  const [year, month, day] = dateStr.split('-');
+  return `${day}.${month}.${year}`;
+};
 
-export default function FilterPanel({ setFilteredData, setCurrentPageNumber, setCurrentFilters }: FilterPanelProps) {
+export default function FilterPanel({ 
+  setFilteredData, 
+  setCurrentPageNumber, 
+  setCurrentFilters,
+  setTableLoading 
+}: FilterPanelProps) {
   const { user, isAuthenticated } = useAuth();
   const { startParsing, fetchTenders } = useParser();
+  const { notify } = useNotification();
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    setTableLoading(isLoading);
+  }, [isLoading, setTableLoading]);
 
   // Проверяем, что у пользователя есть права на просмотр фильтров
   if (user?.role === 'user') {
@@ -78,16 +88,101 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber, set
       today.setHours(23, 59, 59, 999);
 
       if (selectedDate > today) {
-        alert('Дата не может быть в будущем');
+        notify({
+          type: 'error',
+          title: 'Ошибка',
+          message: 'Дата не может быть в будущем'
+        });
         return;
+      }
+
+      // Проверка диапазонов дат
+      const dateRanges = {
+        contractDateFrom: 'contractDateTo',
+        contractDateTo: 'contractDateFrom',
+        publishDateFrom: 'publishDateTo',
+        publishDateTo: 'publishDateFrom',
+        updateDateFrom: 'updateDateTo',
+        updateDateTo: 'updateDateFrom',
+        executionDateStart: 'executionDateEnd',
+        executionDateEnd: 'executionDateStart'
+      };
+
+      const isEndDate = name.endsWith('To') || name.endsWith('End');
+      const isStartDate = name.endsWith('From') || name.endsWith('Start');
+      
+      if (isEndDate || isStartDate) {
+        const pairedFieldName = dateRanges[name as keyof typeof dateRanges];
+        const pairedValue = filters[pairedFieldName as keyof FilterValue] as string;
+        
+        if (pairedValue) {
+          const currentDate = new Date(value);
+          const pairedDate = new Date(pairedValue);
+          
+          if (isEndDate && currentDate < pairedDate) {
+            // Если конечная дата меньше начальной, приравниваем к начальной
+            setFilters(prev => ({
+              ...prev,
+              [name]: pairedValue
+            }));
+            return;
+          }
+          
+          if (isStartDate && currentDate > new Date(pairedValue)) {
+            // Если начальная дата больше конечной, приравниваем конечную к начальной
+            setFilters(prev => ({
+              ...prev,
+              [pairedFieldName]: value,
+              [name]: value
+            }));
+            return;
+          }
+        }
       }
     }
 
     // Для числовых полей преобразуем значение в число или 0
     if (type === 'number') {
+      const numValue = value === '' ? 0 : Number(value);
+      
+      // Обработка диапазонов страниц и цен
+      if (name === 'pageEnd' && numValue < filters.pageStart) {
+        setFilters(prev => ({
+          ...prev,
+          [name]: prev.pageStart
+        }));
+        return;
+      }
+      if (name === 'pageStart') {
+        setFilters(prev => ({
+          ...prev,
+          pageEnd: (!prev.pageEnd || prev.pageEnd < numValue) ? numValue : prev.pageEnd,
+          [name]: numValue
+        }));
+        return;
+      }
+      if (name === 'priceTo' && numValue !== 0 && numValue < filters.priceFrom) {
+        setFilters(prev => ({
+          ...prev,
+          [name]: prev.priceFrom
+        }));
+        return;
+      }
+      if (name === 'priceFrom') {
+        setFilters(prev => {
+          const currentPriceTo = prev.priceTo || 0;
+          return {
+            ...prev,
+            priceTo: (currentPriceTo !== 0 && currentPriceTo < numValue) ? numValue : currentPriceTo,
+            [name]: numValue
+          };
+        });
+        return;
+      }
+
       setFilters(prev => ({
         ...prev,
-        [name]: value === '' ? 0 : Number(value)
+        [name]: numValue
       }));
       return;
     }
@@ -110,19 +205,50 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber, set
     }));
   };
 
+  const prepareFiltersForBackend = () => {
+    const preparedFilters = { ...filters };
+
+    // Форматируем все даты в формат DD.MM.YYYY или возвращаем пустую строку
+    preparedFilters.contractDateFrom = preparedFilters.contractDateFrom ? formatDateToRussian(preparedFilters.contractDateFrom) : '';
+    preparedFilters.contractDateTo = preparedFilters.contractDateTo ? formatDateToRussian(preparedFilters.contractDateTo) : '';
+    preparedFilters.publishDateFrom = preparedFilters.publishDateFrom ? formatDateToRussian(preparedFilters.publishDateFrom) : '';
+    preparedFilters.publishDateTo = preparedFilters.publishDateTo ? formatDateToRussian(preparedFilters.publishDateTo) : '';
+    preparedFilters.updateDateFrom = preparedFilters.updateDateFrom ? formatDateToRussian(preparedFilters.updateDateFrom) : '';
+    preparedFilters.updateDateTo = preparedFilters.updateDateTo ? formatDateToRussian(preparedFilters.updateDateTo) : '';
+    preparedFilters.executionDateStart = preparedFilters.executionDateStart ? formatDateToRussian(preparedFilters.executionDateStart) : '';
+    preparedFilters.executionDateEnd = preparedFilters.executionDateEnd ? formatDateToRussian(preparedFilters.executionDateEnd) : '';
+
+    // Гарантируем значения по умолчанию согласно API
+    preparedFilters.pageStart = preparedFilters.pageStart || 1;
+    preparedFilters.pageEnd = preparedFilters.pageEnd || 1;
+    preparedFilters.priceFrom = preparedFilters.priceFrom || 0;
+    preparedFilters.priceTo = preparedFilters.priceTo || 0;
+    preparedFilters.sortBy = preparedFilters.sortBy || 1;
+    preparedFilters.sortAscending = preparedFilters.sortAscending ?? false;
+    preparedFilters.terminationGrounds = preparedFilters.terminationGrounds || [];
+    preparedFilters.searchString = preparedFilters.searchString || '';
+
+    return preparedFilters;
+  };
+
   const applyFilters = async () => {
     if (!isAuthenticated) {
-      alert('Необходима авторизация');
+      notify({
+        type: 'error',
+        title: 'Ошибка',
+        message: 'Необходима авторизация'
+      });
       return;
     }
 
     setIsLoading(true);
     try {
-      console.log('Applying filters:', filters);
+      const preparedFilters = prepareFiltersForBackend();
+      console.log('Applying filters:', preparedFilters);
       
       if (canParse) {
-        console.log('Starting parsing with filters:', filters);
-        const parseResult = await startParsing(filters);
+        console.log('Starting parsing with filters:', preparedFilters);
+        const parseResult = await startParsing(preparedFilters);
         console.log('Parse result:', parseResult);
         
         if (!parseResult.success) {
@@ -133,8 +259,8 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber, set
         }
       }
 
-      console.log('Fetching tenders with filters:', filters);
-      const { success, data, error } = await fetchTenders(filters);
+      console.log('Fetching tenders with filters:', preparedFilters);
+      const { success, data, error } = await fetchTenders(preparedFilters);
       console.log('Fetch result:', { success, data, error });
       
       if (!success || !data) {
@@ -144,11 +270,20 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber, set
       console.log('Setting filtered data:', data);
       setFilteredData(data);
       setCurrentPageNumber(1);
-      setCurrentFilters(filters);
+      setCurrentFilters(preparedFilters);
+      notify({
+        type: 'success',
+        title: 'Успех',
+        message: 'Фильтры успешно применены'
+      });
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Неизвестная ошибка при применении фильтров';
       if (errorMessage !== 'Необходима авторизация') {
-        alert(errorMessage);
+        notify({
+          type: 'error',
+          title: 'Ошибка',
+          message: errorMessage
+        });
       }
     } finally {
       setIsLoading(false);
@@ -205,22 +340,23 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber, set
         {/* Price Range */}
         <div>
           <label className="input-label">Цена (в рублях)</label>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex items-center gap-2">
             <input
               type="number" 
               name="priceFrom"
               value={filters.priceFrom || ''}
               onChange={handleInputChange}
               placeholder="От"
-              className="input-base"
+              className="input-base w-full"
             />
+            <span className="text-gray-500">—</span>
             <input 
               type="number" 
               name="priceTo"
               value={filters.priceTo || ''}
               onChange={handleInputChange}
               placeholder="До" 
-              className="input-base"
+              className="input-base w-full"
             />
           </div>
         </div>
@@ -228,7 +364,7 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber, set
         {/* Pages Range */}
         <div>
           <label className="input-label">Номера страниц (1-10)</label>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex items-center gap-2">
             <input 
               type="number" 
               name="pageStart"
@@ -237,8 +373,9 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber, set
               min="1" 
               max="10" 
               placeholder="От 1" 
-              className="input-base"
+              className="input-base w-full"
             />
+            <span className="text-gray-500">—</span>
             <input 
               type="number" 
               name="pageEnd"
@@ -247,7 +384,7 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber, set
               min="1" 
               max="10" 
               placeholder="До 10" 
-              className="input-base"
+              className="input-base w-full"
             />
           </div>
         </div>
@@ -295,20 +432,21 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber, set
         {/* Contract Date */}
         <div>
           <label className="input-label">Дата контракта</label>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex items-center gap-2">
             <input 
               type="date" 
               name="contractDateFrom"
               value={filters.contractDateFrom}
               onChange={handleInputChange}
-              className="input-base"
+              className="input-base w-full"
             />
+            <span className="text-gray-500">—</span>
             <input 
               type="date" 
               name="contractDateTo"
               value={filters.contractDateTo}
               onChange={handleInputChange}
-              className="input-base"
+              className="input-base w-full"
             />
           </div>
         </div>
@@ -316,20 +454,21 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber, set
         {/* Publish Date */}
         <div>
           <label className="input-label">Дата размещения</label>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex items-center gap-2">
             <input 
               type="date" 
               name="publishDateFrom"
               value={filters.publishDateFrom}
               onChange={handleInputChange}
-              className="input-base"
+              className="input-base w-full"
             />
+            <span className="text-gray-500">—</span>
             <input 
               type="date" 
               name="publishDateTo"
               value={filters.publishDateTo}
               onChange={handleInputChange}
-              className="input-base"
+              className="input-base w-full"
             />
           </div>
         </div>
@@ -337,20 +476,21 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber, set
         {/* Update Date */}
         <div>
           <label className="input-label">Дата обновления</label>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex items-center gap-2">
             <input 
               type="date" 
               name="updateDateFrom"
               value={filters.updateDateFrom}
               onChange={handleInputChange}
-              className="input-base"
+              className="input-base w-full"
             />
+            <span className="text-gray-500">—</span>
             <input 
               type="date" 
               name="updateDateTo"
               value={filters.updateDateTo}
               onChange={handleInputChange}
-              className="input-base"
+              className="input-base w-full"
             />
           </div>
         </div>
@@ -358,20 +498,21 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber, set
         {/* Execution Date */}
         <div>
           <label className="input-label">Дата исполнения</label>
-          <div className="flex flex-wrap gap-2">
+          <div className="flex items-center gap-2">
             <input 
               type="date" 
               name="executionDateStart"
               value={filters.executionDateStart}
               onChange={handleInputChange}
-              className="input-base"
+              className="input-base w-full"
             />
+            <span className="text-gray-500">—</span>
             <input 
               type="date" 
               name="executionDateEnd"
               value={filters.executionDateEnd}
               onChange={handleInputChange}
-              className="input-base"
+              className="input-base w-full"
             />
           </div>
         </div>
@@ -379,29 +520,23 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber, set
         {/* Sort Options */}
         <div>
           <label className="input-label">Сортировка</label>
-          <div className="flex flex-wrap gap-2">
-            <div className="relative w-full">
-              <select 
-                name="sortBy"
-                value={filters.sortBy || 1}
-                onChange={handleInputChange}
-                className="input-base pl-9 w-full appearance-none"
-              >
-                {sortOptions.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
-                <FontAwesomeIcon icon={sortOptions.find(opt => opt.value === (filters.sortBy || 1))?.icon || faCalendarDays} />
-              </div>
-            </div>
+          <div className="flex items-center gap-2">
+            <select 
+              name="sortBy"
+              value={filters.sortBy || 1}
+              onChange={handleInputChange}
+              className="input-base w-full"
+            >
+              <option value={1}>По дате обновления</option>
+              <option value={2}>По дате публикации</option>
+              <option value={3}>По цене</option>
+              <option value={4}>По релевантности</option>
+            </select>
             <select 
               name="sortAscending"
               value={(filters.sortAscending ?? false).toString()}
               onChange={handleInputChange}
-              className="input-base"
+              className="input-base w-full"
             >
               <option value="true">По возрастанию</option>
               <option value="false">По убыванию</option>

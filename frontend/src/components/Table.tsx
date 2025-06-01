@@ -7,13 +7,15 @@ interface TableProps {
   children: ReactNode
   emptyMessage?: string
   isLoading?: boolean
+  loadingMessage?: string
 }
 
-export default function Table({ headers, children, emptyMessage, isLoading }: TableProps) {
+export default function Table({ headers, children, emptyMessage, isLoading, loadingMessage = "Загрузка..." }: TableProps) {
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-40">
-        <FontAwesomeIcon icon={faSpinner} className="text-4xl text-indigo-600 animate-spin" />
+      <div className="flex flex-col items-center justify-center h-40">
+        <FontAwesomeIcon icon={faSpinner} className="text-4xl text-indigo-600 animate-spin mb-4" />
+        <p className="text-gray-500">{loadingMessage}</p>
       </div>
     )
   }
