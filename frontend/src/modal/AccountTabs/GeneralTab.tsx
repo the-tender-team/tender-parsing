@@ -1,12 +1,13 @@
 'use client'
 
+import { useState } from 'react'
 import { useAuth } from '@/providers/AuthProvider'
 import { formatDate } from '@/libs/formatDate'
 import InfoField from '../../components/ModalField'
 import Button from '../../components/Button'
 import Section from '../../components/ModalSection'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faSignOutAlt, faCircleInfo } from '@fortawesome/free-solid-svg-icons'
+import { faSignOutAlt, faCircleInfo, faSpinner } from '@fortawesome/free-solid-svg-icons'
 
 interface Props {
   onLogout: () => Promise<void>
@@ -14,12 +15,22 @@ interface Props {
 
 export default function AccountTab({ onLogout }: Props) {
   const { user } = useAuth()
+  const [isLoading, setIsLoading] = useState(false)
 
   const roles = {
     owner: 'Владелец',
     admin: 'Администратор',
     user: 'Пользователь'
   } as const
+
+  const handleLogout = async () => {
+    setIsLoading(true)
+    try {
+      await onLogout()
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <>
@@ -43,13 +54,16 @@ export default function AccountTab({ onLogout }: Props) {
         </div>
       </Section>
 
-      <div className="flex justify-end">
+      <div className="flex justify-end items-center gap-2">
+        {isLoading && (
+          <FontAwesomeIcon icon={faSpinner} className="text-indigo-600 animate-spin text-xl" />
+        )}
         <Button
-          onClick={onLogout}
-          type={"submit"}
+          onClick={handleLogout}
+          type="button"
           variant="danger"
           icon={faSignOutAlt}
-          className="flex items-center gap-2"
+          disabled={isLoading}
         >
           Выйти
         </Button>

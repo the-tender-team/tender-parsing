@@ -4,14 +4,22 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/providers/AuthProvider';
 import { useParser } from '@/providers/ParserProvider';
 import { FilterValue } from '@/types/tender';
-import { faRedo, faFilter } from '@fortawesome/free-solid-svg-icons'
+import { faRedo, faFilter, faChartLine, faCalendarDays, faCalendarPlus, faMoneyBill } from '@fortawesome/free-solid-svg-icons'
 import Button from '@/components/Button'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 interface FilterPanelProps {
   setFilteredData: (data: any[]) => void;
   setCurrentPageNumber: (page: number) => void;
   setCurrentFilters: (filters: FilterValue) => void;
 }
+
+const sortOptions = [
+  { value: 1, label: 'По дате обновления', icon: faCalendarDays },
+  { value: 2, label: 'По дате публикации', icon: faCalendarPlus },
+  { value: 3, label: 'По цене', icon: faMoneyBill },
+  { value: 4, label: 'По релевантности', icon: faChartLine },
+];
 
 export default function FilterPanel({ setFilteredData, setCurrentPageNumber, setCurrentFilters }: FilterPanelProps) {
   const { user, isAuthenticated } = useAuth();
@@ -44,8 +52,8 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber, set
   const [filters, setFilters] = useState<FilterValue>(() => ({
     pageStart: 1,
     pageEnd: 1,
-    priceFrom: undefined,
-    priceTo: undefined,
+    priceFrom: 0,
+    priceTo: 0,
     terminationGrounds: [],
     sortBy: 1,
     sortAscending: false,
@@ -74,6 +82,15 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber, set
         return;
       }
     }
+
+    // Для числовых полей преобразуем значение в число или 0
+    if (type === 'number') {
+      setFilters(prev => ({
+        ...prev,
+        [name]: value === '' ? 0 : Number(value)
+      }));
+      return;
+    }
     
     setFilters(prev => ({
       ...prev,
@@ -95,7 +112,7 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber, set
 
   const applyFilters = async () => {
     if (!isAuthenticated) {
-      alert('Необходимо войти в систему');
+      alert('Необходима авторизация');
       return;
     }
 
@@ -139,11 +156,11 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber, set
   };
 
   const resetFilters = () => {
-    setFilters({
+    const defaultFilters: FilterValue = {
       pageStart: 1,
       pageEnd: 1,
-      priceFrom: undefined,
-      priceTo: undefined,
+      priceFrom: 0,
+      priceTo: 0,
       terminationGrounds: [],
       sortBy: 1,
       sortAscending: false,
@@ -156,27 +173,11 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber, set
       updateDateTo: '',
       executionDateStart: '',
       executionDateEnd: ''
-    });
+    };
+    setFilters(defaultFilters);
     setFilteredData([]);
     setCurrentPageNumber(1);
-    setCurrentFilters({
-      pageStart: 1,
-      pageEnd: 1,
-      priceFrom: undefined,
-      priceTo: undefined,
-      terminationGrounds: [],
-      sortBy: 1,
-      sortAscending: false,
-      searchString: '',
-      contractDateFrom: '',
-      contractDateTo: '',
-      publishDateFrom: '',
-      publishDateTo: '',
-      updateDateFrom: '',
-      updateDateTo: '',
-      executionDateStart: '',
-      executionDateEnd: ''
-    });
+    setCurrentFilters(defaultFilters);
   };
 
   return (
@@ -379,17 +380,23 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber, set
         <div>
           <label className="input-label">Сортировка</label>
           <div className="flex flex-wrap gap-2">
-            <select 
-              name="sortBy"
-              value={filters.sortBy || 1}
-              onChange={handleInputChange}
-              className="input-base"
-            >
-              <option value={1}>По дате обновления</option>
-              <option value={2}>По дате публикации</option>
-              <option value={3}>По цене</option>
-              <option value={4}>По релевантности</option>
-            </select>
+            <div className="relative w-full">
+              <select 
+                name="sortBy"
+                value={filters.sortBy || 1}
+                onChange={handleInputChange}
+                className="input-base pl-9 w-full appearance-none"
+              >
+                {sortOptions.map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+              <div className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
+                <FontAwesomeIcon icon={sortOptions.find(opt => opt.value === (filters.sortBy || 1))?.icon || faCalendarDays} />
+              </div>
+            </div>
             <select 
               name="sortAscending"
               value={(filters.sortAscending ?? false).toString()}
@@ -404,7 +411,7 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber, set
       </div>
 
       {/* Action Buttons */}
-      <div className="flex justify-end space-x-4 mt-6">
+      <div className="flex justify-end gap-2 mt-6">
         <Button
           onClick={resetFilters}
           type="button"
@@ -421,7 +428,7 @@ export default function FilterPanel({ setFilteredData, setCurrentPageNumber, set
           icon={faFilter}
           disabled={isLoading}
         >
-          {isLoading ? 'Загрузка...' : 'Применить'}
+          Применить
         </Button>
       </div>
     </div>

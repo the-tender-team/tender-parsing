@@ -23,17 +23,8 @@ export default function ModalWindow({
 }: ModalWindowProps) {
   if (!isOpen) return null
 
-  const handleBackdropClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget && !disableClose) {
-      onClose()
-    }
-  }
-
   return (
-    <div 
-      className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-      onClick={handleBackdropClick}
-    >
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="w-full max-w-2xl bg-white rounded-xl shadow-lg overflow-hidden max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="bg-indigo-600 text-white p-6 flex-shrink-0">

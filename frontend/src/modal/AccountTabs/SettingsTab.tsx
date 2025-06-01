@@ -8,8 +8,7 @@ import InputField from '../ModalInputField'
 import Section from '../../components/ModalSection'
 import Button from '../../components/Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUserShield, faUserEdit, faKey } from '@fortawesome/free-solid-svg-icons'
-import { apiFetch } from '@/libs/api'
+import { faUserShield, faUserEdit, faKey, faCheck, faPaperPlane, faLock } from '@fortawesome/free-solid-svg-icons'
 
 interface UserData {
   username: string
@@ -23,7 +22,6 @@ interface Props {
 }
 
 export default function SettingsTab({ userData }: Props) {
-  const { refreshUser } = useAuth()
   const { changePassword, changeUsername } = useUser()
   const { requestAdminRole } = useAdmin()
   
@@ -157,7 +155,7 @@ export default function SettingsTab({ userData }: Props) {
             type="button"
             variant="disabled"
             disabled={isSubmittingUsername}
-            className="w-full sm:w-auto"
+            icon={faLock}
           >
             Недоступно
           </Button>
@@ -192,7 +190,7 @@ export default function SettingsTab({ userData }: Props) {
             type="submit"
             variant="primary"
             disabled={isSubmittingPassword}
-            className="w-full sm:w-auto"
+            icon={faCheck}
           >
             Сохранить изменения
           </Button>
@@ -212,7 +210,7 @@ export default function SettingsTab({ userData }: Props) {
             type="submit"
             disabled={adminRequested || isSubmittingAdminRequest}
             variant={adminRequested ? 'disabled' : 'primary'}
-            className="w-full sm:w-auto"
+            icon={adminRequested ? faLock : faPaperPlane}
           >
             {adminRequested ? 'Запрос отправлен' : 'Отправить запрос'}
           </Button>
