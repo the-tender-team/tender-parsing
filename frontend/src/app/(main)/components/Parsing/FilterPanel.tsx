@@ -504,7 +504,7 @@ export default function FilterPanel({
         {/* Sort Options */}
         <div>
           <label className="input-label">Сортировка</label>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
             <select 
               name="sortBy"
               value={filters.sortBy || 1}
@@ -520,7 +520,7 @@ export default function FilterPanel({
               name="sortAscending"
               value={(filters.sortAscending ?? false).toString()}
               onChange={handleInputChange}
-              className="input-base w-full"
+              className="input-base w-full sm:w-auto"
             >
               <option value="true">По возрастанию</option>
               <option value="false">По убыванию</option>

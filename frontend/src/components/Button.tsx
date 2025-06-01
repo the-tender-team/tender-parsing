@@ -53,7 +53,7 @@ export default function Button({
       className={`
         rounded-md font-medium transition-colors
         flex items-center justify-center gap-2
-        ${hasContent ? 'sm:w-auto w-12' : 'w-12'}
+        ${hasContent ? 'w-auto min-w-[48px]' : 'w-12'}
         ${variantClasses[variant]}
         ${sizeClasses[size]}
         ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
@@ -67,9 +67,9 @@ export default function Button({
         />
       )}
       {hasContent && (
-        <div className="hidden sm:block">
+        <span className="hidden sm:inline">
           {children}
-        </div>
+        </span>
       )}
       {icon && iconPosition === 'right' && (
         <FontAwesomeIcon 
