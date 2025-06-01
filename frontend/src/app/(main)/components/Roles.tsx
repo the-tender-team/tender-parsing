@@ -1,5 +1,5 @@
-import { FaChartPie, FaUserTie, FaUserShield, FaCheckCircle, FaTimesCircle } from 'react-icons/fa'
 import Section from "@/components/Section"
+import { FaChartPie, FaUserTie, FaUserShield, FaCheckCircle, FaTimesCircle } from 'react-icons/fa'
 
 const roles = [
   {

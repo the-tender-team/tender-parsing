@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/providers/AuthProvider';
 import { useParser } from '@/providers/ParserProvider';
-import { FilterValue } from './parsing';
-import { faRedo, faFilter } from '@fortawesome/free-solid-svg-icons'
-import Button from '@/components/Button'
 import { useNotification } from '@/providers/NotificationProvider';
+import { FilterValue } from '@/types/tender';
+import Button from '@/components/Button'
+import { faRedo, faFilter } from '@fortawesome/free-solid-svg-icons'
 
 interface FilterPanelProps {
   setFilteredData: (data: any[]) => void;
@@ -42,22 +42,6 @@ export default function FilterPanel({
   }
 
   const canParse = user?.role === 'admin' || user?.role === 'owner';
-
-  // Функция для получения текущей даты и даты месяц назад
-  const getDefaultDates = () => {
-    const endDate = new Date();
-    const startDate = new Date();
-    startDate.setMonth(endDate.getMonth() - 1);
-
-    const formatDate = (date: Date) => {
-      return date.toISOString().split('T')[0]; // Возвращает YYYY-MM-DD
-    };
-
-    return {
-      startDateStr: formatDate(startDate),
-      endDateStr: formatDate(endDate)
-    };
-  };
 
   const [filters, setFilters] = useState<FilterValue>(() => ({
     pageStart: 1,

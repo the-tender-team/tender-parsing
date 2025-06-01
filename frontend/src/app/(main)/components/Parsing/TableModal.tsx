@@ -1,13 +1,13 @@
 'use client';
 
-import { TableValue, TenderAnalysis } from '@/types/tender';
 import ModalWindow from '@/components/Modal';
-import ReactMarkdown from 'react-markdown';
 import ModalSection from "@/components/ModalSection";
 import ModalField from "@/components/ModalField";
+import { formatDate } from '@/libs/formatDate';
+import { TableValue, TenderAnalysis } from '@/types/tender';
+import ReactMarkdown from 'react-markdown';
 import { faFileAlt, faSearch, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { formatDate } from '@/libs/formatDate';
 
 interface ContractModalProps {
   contract: TableValue;

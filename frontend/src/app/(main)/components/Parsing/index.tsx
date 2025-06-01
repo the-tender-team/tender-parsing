@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useAuth } from '@/providers/AuthProvider'
+import { useTenders } from '@/providers/TenderProvider';
+import { useNotification } from '@/providers/NotificationProvider';
+import Section from "@/components/Section"
 import Filters from "./FilterPanel"
 import Table from "./TablePanel"
 import TableModal from './TableModal';
 import { TableValue, FilterValue, TenderAnalysis } from '@/types/tender';
-import Section from "@/components/Section"
-import { useTenders } from '@/providers/TenderProvider';
-import { useNotification } from '@/providers/NotificationProvider';
 
 const defaultFilters: FilterValue = {
   pageStart: 1,

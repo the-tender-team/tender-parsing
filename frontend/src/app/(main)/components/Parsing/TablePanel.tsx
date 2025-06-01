@@ -1,11 +1,11 @@
 'use client';
 
+import { useEffect, } from 'react';
 import { TableValue, FilterValue } from '@/types/tender';
-import { faChevronLeft, faChevronRight, faSearch, faHistory, faChartLine } from '@fortawesome/free-solid-svg-icons';
 import Button from '@/components/Button';
 import Table from '@/components/Table';
 import { useTenders } from '@/providers/TenderProvider';
-import { useEffect, useState } from 'react';
+import { faChevronLeft, faChevronRight, faSearch, faHistory, faChartLine } from '@fortawesome/free-solid-svg-icons';
 
 // Функция для парсинга цены
 const parsePrice = (priceStr: string): number => {

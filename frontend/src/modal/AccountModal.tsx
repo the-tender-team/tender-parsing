@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '@/providers/AuthProvider'
 import ModalWindow from '@/components/Modal'
+import IconButton from '@/components/IconButton'
 import GeneralTab from './AccountTabs/GeneralTab'
 import SettingsTab from './AccountTabs/SettingsTab'
 import PanelTab from './AccountTabs/PanelTab'
-import IconButton from '@/components/IconButton'
 import { faHome, faSliders, faCog } from '@fortawesome/free-solid-svg-icons'
 
 type Tab = 'account' | 'settings' | 'panel'

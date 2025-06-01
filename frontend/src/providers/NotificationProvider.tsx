@@ -1,7 +1,7 @@
 'use client'
 
 import React, { createContext, useContext, useState, ReactNode } from 'react'
-import Notification from '../components/Notification'
+import Notification from '@/components/Notification'
 
 type NotificationType = 'success' | 'error' | 'info'
 

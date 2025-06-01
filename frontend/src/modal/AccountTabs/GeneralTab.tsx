@@ -2,9 +2,9 @@
 
 import { useState } from 'react'
 import { useAuth } from '@/providers/AuthProvider'
-import InfoField from '../../components/ModalField'
-import Button from '../../components/Button'
-import Section from '../../components/ModalSection'
+import InfoField from '@/components/ModalField'
+import Button from '@/components/Button'
+import Section from '@/components/ModalSection'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSignOutAlt, faCircleInfo, faSpinner } from '@fortawesome/free-solid-svg-icons'
 
