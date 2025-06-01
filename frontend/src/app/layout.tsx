@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     siteName: 'Tender Parsing',
     images: [
       {
-        url: '/og-image.png',
+        url: 'https://tender-parsing.ru/og-image.png',
         width: 1200,
         height: 630,
         alt: 'Сервис анализа проблемных тендеров на сайте госзакупок',
