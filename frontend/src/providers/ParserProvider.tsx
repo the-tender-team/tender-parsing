@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext } from 'react'
 import { useNotification } from '@/providers/NotificationProvider'
-import { FilterValue, ParseResponse, TableValue } from '@/types/tender'
+import { FilterValue, TableValue } from '@/types/tender'
 
 interface ParserContextType {
   startParsing: (filters: FilterValue) => Promise<{ success: boolean; error?: string }>

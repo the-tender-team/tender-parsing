@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useAuth } from '@/providers/AuthProvider'
 import { useUser } from '@/providers/UserProvider'
 import { useNotification } from '@/providers/NotificationProvider'
 import InputField from '../ModalInputField'
-import Section from '../../components/ModalSection'
-import Button from '../../components/Button'
+import Section from '@/components/ModalSection'
+import Button from '@/components/Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserShield, faUserEdit, faKey, faCheck, faPaperPlane, faLock } from '@fortawesome/free-solid-svg-icons'
 

@@ -2,8 +2,8 @@
 
 import React, { createContext, useContext } from 'react'
 import { useNotification } from '@/providers/NotificationProvider'
-import { validateChangePasswordData } from '@/libs/validation'
 import { useAuth } from '@/providers/AuthProvider'
+import { validateChangePasswordData } from '@/libs/validation'
 
 interface UserContextType {
   changeUsername: (newUsername: string, currentPassword: string) => Promise<{ success: boolean; error?: string }>

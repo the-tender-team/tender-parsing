@@ -4,9 +4,9 @@ import { useAuth } from '@/providers/AuthProvider'
 import { useRouter } from 'next/navigation'
 import AccountModal from '../modal/AccountModal'
 import AuthModal from '../modal/AuthModal'
+import Button from "./Button"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch, faSignInAlt, faUser, faBars, faTimes } from '@fortawesome/free-solid-svg-icons'
-import Button from "./Button"
 
 export default function Header() {
   const { isAuthenticated } = useAuth()
