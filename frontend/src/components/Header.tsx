@@ -104,35 +104,23 @@ export default function Header() {
 
           {/* Правая часть (кнопки) */}
           <div className="flex items-center gap-2 flex-shrink-0 ml-4">
-            {/* Десктопная кнопка */}
+            <Button
+              variant="primary"
+              type="button"
+              onClick={handleMenuToggle}
+              icon={menuOpen ? faTimes : faBars}
+              size="lg"
+              className="md:hidden"
+            />
             <Button 
               type="button"
               variant="auth"
               onClick={handleClick}
-              className="hidden md:flex"
               icon={isAuthenticated ? faUser : faSignInAlt}
               size="lg"
             >
               {isAuthenticated ? 'Личный кабинет' : 'Авторизоваться'}
             </Button>
-
-            {/* Мобильные кнопки */}
-            <Button
-              variant="primary"
-              type="button"
-              className="md:hidden"
-              onClick={handleMenuToggle}
-              icon={menuOpen ? faTimes : faBars}
-              size="lg"
-            />
-            <Button
-              variant="auth"
-              type="button"
-              onClick={handleClick}
-              className="md:hidden"
-              icon={isAuthenticated ? faUser : faSignInAlt}
-              size="lg"
-            />
           </div>
         </div>
 

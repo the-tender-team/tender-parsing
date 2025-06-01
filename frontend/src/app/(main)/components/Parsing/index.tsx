@@ -6,10 +6,13 @@ import TableModal from './TableModal';
 import { TableValue, FilterValue, TenderAnalysis } from '@/types/tender';
 import Section from "@/components/Section"
 import { useTenders } from '@/providers/TenderProvider';
+import { useNotification } from '@/providers/NotificationProvider';
 
 const defaultFilters: FilterValue = {
   pageStart: 1,
   pageEnd: 10,
+  priceFrom: 0,
+  priceTo: 0,
   terminationGrounds: [],
   sortBy: 0,
   sortAscending: true,
@@ -25,8 +28,9 @@ const defaultFilters: FilterValue = {
 };
 
 export default function Parsing() {
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated } = useAuth();
   const { analyzeTender } = useTenders();
+  const { notify } = useNotification();
   const [filteredData, setFilteredData] = useState<TableValue[]>([]);
   const [currentPageNumber, setCurrentPageNumber] = useState(1);
   const [selectedContract, setSelectedContract] = useState<TableValue | null>(null);
@@ -35,6 +39,7 @@ export default function Parsing() {
   const [analysis, setAnalysis] = useState<TenderAnalysis | null>(null);
   const [analysisLoading, setAnalysisLoading] = useState(false);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
+  const [isTableLoading, setIsTableLoading] = useState(false);
 
   const itemsPerPage = 10;
 
@@ -46,14 +51,26 @@ export default function Parsing() {
     setAnalysis(null);
 
     try {
-      const { success, data, error } = await analyzeTender(contract.id);
+      const { success, data, error } = await analyzeTender(contract.id.toString());
       if (success && data) {
         setAnalysis(data);
       } else {
-        setAnalysisError(error || 'Не удалось загрузить данные анализа');
+        const errorMessage = error || 'Не удалось загрузить данные анализа';
+        setAnalysisError(errorMessage);
+        notify({
+          type: 'error',
+          title: 'Ошибка анализа',
+          message: errorMessage
+        });
       }
     } catch (err) {
-      setAnalysisError('Произошла ошибка при загрузке анализа');
+      const errorMessage = 'Произошла ошибка при загрузке анализа';
+      setAnalysisError(errorMessage);
+      notify({
+        type: 'error',
+        title: 'Ошибка анализа',
+        message: errorMessage
+      });
     } finally {
       setAnalysisLoading(false);
     }
@@ -90,6 +107,7 @@ export default function Parsing() {
           setFilteredData={setFilteredData}
           setCurrentPageNumber={setCurrentPageNumber}
           setCurrentFilters={setCurrentFilters}
+          setTableLoading={setIsTableLoading}
         />
         <Table
           data={filteredData}
@@ -99,6 +117,7 @@ export default function Parsing() {
           showContractDetails={showContractDetails}
           setFilteredData={setFilteredData}
           currentFilters={currentFilters}
+          isLoading={isTableLoading}
         />
         {isModalOpen && selectedContract && (
           <TableModal

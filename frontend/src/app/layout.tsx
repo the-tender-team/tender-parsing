@@ -1,7 +1,7 @@
 import { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
 import "./globals.css"
-import { NotificationProvider } from "@/libs/NotificationProvider"
+import { NotificationProvider } from "@/providers/NotificationProvider"
 import { AuthProvider } from "@/providers/AuthProvider"
 import { UserProvider } from "@/providers/UserProvider"
 import { ControlProvider } from "@/providers/ControlProvider"

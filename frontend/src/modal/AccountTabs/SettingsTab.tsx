@@ -3,13 +3,12 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@/providers/AuthProvider'
 import { useUser } from '@/providers/UserProvider'
-import { useAdmin } from '@/providers/ControlProvider'
+import { useNotification } from '@/providers/NotificationProvider'
 import InputField from '../ModalInputField'
 import Section from '../../components/ModalSection'
 import Button from '../../components/Button'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faUserShield, faUserEdit, faKey } from '@fortawesome/free-solid-svg-icons'
-import { apiFetch } from '@/libs/api'
+import { faUserShield, faUserEdit, faKey, faCheck, faPaperPlane, faLock } from '@fortawesome/free-solid-svg-icons'
 
 interface UserData {
   username: string
@@ -23,9 +22,9 @@ interface Props {
 }
 
 export default function SettingsTab({ userData }: Props) {
+  const { changePassword, changeUsername, requestAdminRole } = useUser()
+  const { notify } = useNotification()
   const { refreshUser } = useAuth()
-  const { changePassword, changeUsername } = useUser()
-  const { requestAdminRole } = useAdmin()
   
   // Состояния для формы изменения username
   const [usernameForm, setUsernameForm] = useState({
@@ -43,13 +42,7 @@ export default function SettingsTab({ userData }: Props) {
   const [isSubmittingPassword, setIsSubmittingPassword] = useState(false)
 
   // Состояния для запроса прав администратора
-  const [adminRequested, setAdminRequested] = useState(userData.hasPendingAdminRequest || false)
   const [isSubmittingAdminRequest, setIsSubmittingAdminRequest] = useState(false)
-
-  // Проверяем статус запроса при загрузке и при обновлении userData
-  useEffect(() => {
-    setAdminRequested(userData.hasPendingAdminRequest || false)
-  }, [userData, userData.hasPendingAdminRequest])
 
   // Обработчик изменения username
   const handleSaveUsername = async (e: React.FormEvent) => {
@@ -117,25 +110,46 @@ export default function SettingsTab({ userData }: Props) {
 
   // Обработчик запроса прав администратора
   const handleAdminRequest = async () => {
-    setIsSubmittingAdminRequest(true)
+    if (userData.hasPendingAdminRequest) {
+      notify({
+        type: 'error',
+        title: 'Ошибка',
+        message: 'Заявка уже подана и ожидает рассмотрения'
+      });
+      return;
+    }
+
+    setIsSubmittingAdminRequest(true);
     
     try {
-      const { success, error } = await requestAdminRole()
+      const { success, error } = await requestAdminRole();
 
       if (success) {
-        setAdminRequested(true)
+        // Обновляем данные пользователя после успешной отправки запроса
+        await refreshUser();
+        
+        notify({
+          type: 'success',
+          title: 'Успешно',
+          message: 'Заявка на получение прав администратора отправлена'
+        });
       } else {
-        throw new Error(error)
+        throw new Error(error);
       }
     } catch (error: any) {
-      console.error('Error requesting admin role:', error)
+      console.error('Error requesting admin role:', error);
+      notify({
+        type: 'error',
+        title: 'Ошибка',
+        message: error.message || 'Ошибка при отправке заявки'
+      });
     } finally {
-      setIsSubmittingAdminRequest(false)
+      setIsSubmittingAdminRequest(false);
     }
-  }
+  };
 
   return (
-    <div className="p-6 space-y-6">
+    <>
       {/* Секция изменения имени пользователя */}
       <Section icon={<FontAwesomeIcon icon={faUserEdit} />} title="Изменение имени пользователя">
         <form onSubmit={handleSaveUsername} className="space-y-4">
@@ -157,7 +171,7 @@ export default function SettingsTab({ userData }: Props) {
             type="button"
             variant="disabled"
             disabled={isSubmittingUsername}
-            className="w-full sm:w-auto"
+            icon={faLock}
           >
             Недоступно
           </Button>
@@ -192,7 +206,7 @@ export default function SettingsTab({ userData }: Props) {
             type="submit"
             variant="primary"
             disabled={isSubmittingPassword}
-            className="w-full sm:w-auto"
+            icon={faCheck}
           >
             Сохранить изменения
           </Button>
@@ -203,21 +217,21 @@ export default function SettingsTab({ userData }: Props) {
       {userData.role === 'user' && (
         <Section icon={<FontAwesomeIcon icon={faUserShield} />} title="Запрос прав администратора">
           <p className="text-sm text-gray-500 mb-4">
-            {adminRequested 
+            {userData.hasPendingAdminRequest 
               ? "Ваш запрос находится на рассмотрении" 
               : "Отправьте запрос, чтобы получить расширенные права в системе"}
           </p>
           <Button
             onClick={handleAdminRequest}
             type="submit"
-            disabled={adminRequested || isSubmittingAdminRequest}
-            variant={adminRequested ? 'disabled' : 'primary'}
-            className="w-full sm:w-auto"
+            disabled={userData.hasPendingAdminRequest || isSubmittingAdminRequest}
+            variant={userData.hasPendingAdminRequest ? 'disabled' : 'primary'}
+            icon={userData.hasPendingAdminRequest ? faLock : faPaperPlane}
           >
-            {adminRequested ? 'Запрос отправлен' : 'Отправить запрос'}
+            {userData.hasPendingAdminRequest ? 'Запрос отправлен' : 'Отправить запрос'}
           </Button>
         </Section>
       )}
-    </div>
+    </>
   )
 }

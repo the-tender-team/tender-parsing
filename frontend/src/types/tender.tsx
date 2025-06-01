@@ -1,8 +1,8 @@
 export interface FilterValue {
   pageStart: number;
   pageEnd: number;
-  priceFrom?: number;
-  priceTo?: number;
+  priceFrom: number;
+  priceTo: number;
   terminationGrounds: number[];
   sortBy: number;
   sortAscending: boolean;
@@ -39,7 +39,13 @@ export interface ParseResponse {
   error?: string;
 }
 
+export interface TenderAnalysis {
+  analysis: string;
+  cached: boolean;
+}
+
 export interface TenderContextType {
   startParsing: (filters: FilterValue) => Promise<ParseResponse>;
   fetchTenders: (filters: FilterValue) => Promise<{ success: boolean; data?: TableValue[]; error?: string }>;
+  analyzeTender: (tenderId: string, signal?: AbortSignal) => Promise<{ success: boolean; data?: TenderAnalysis; error?: string }>;
 } 
