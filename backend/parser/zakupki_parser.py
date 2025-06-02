@@ -57,11 +57,11 @@ def parse_page(args: tuple[ParseFilters, int]):
             title_block = block.select_one(".registry-entry__header-mid__number")
             title = title_block.get_text(strip=True)
             link = title_block.select_one("a")["href"]
-            customer = block.select_one(".registry-entry__body-href").get_text(strip=True)
+            customer = block.select_one(".registry-entry__body-href").get_text(strip=False)
             price = block.select_one(".price-block__value").get_text(strip=True)
             contractNumber = block.select_one(".registry-entry__body-value").get_text(strip=True).replace('\n', '').replace(' ', '').replace("№", "№ ")
             try:
-                purchaseObjects = block.select_one(".lots-wrap-content__body__val span span").get_text(strip=True)
+                purchaseObjects = block.select_one(".lots-wrap-content__body__val span span").get_text(strip=False)
             except Exception as e:
                 purchaseObjects = ""
             dates = block.select(".data-block__value")
