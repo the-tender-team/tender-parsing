@@ -1,0 +1,175 @@
+@import "tailwindcss";
+
+html {
+  scroll-behavior: smooth;
+}
+
+button {
+  cursor: pointer;
+}
+
+.input-label {
+  display: block;         /* block */
+  font-size: 1rem;        /* text-base */
+  font-weight: 500;       /* font-medium */
+  color: #374151;       /* text-gray-700 */
+  margin-bottom: 0.25rem; /* mb-1 */
+}
+
+.input-base {
+  width: 100%;                 /* w-full */
+  padding: 0.5rem 1rem;        /* px-4 py-2 */
+  border: 1px solid #d1d5db; /* border-gray-300 */
+  border-radius: 0.375rem;     /* rounded-md */
+  outline: none;               /* focus:outline-none (default state) */
+  transition-property: box-shadow, border-color;
+  transition-duration: 200ms;
+  min-width: 0;               /* Предотвращает выход за пределы контейнера */
+  font-size: 0.875rem;        /* text-sm */
+  max-width: 100%;            /* Предотвращает выход за пределы контейнера */
+}
+
+.input-base[type="date"] {
+  min-width: 0;               /* Убираем фиксированную минимальную ширину */
+  width: 100%;               /* Заставляем занимать всю доступную ширину */
+  padding-right: 0.5rem;     /* Уменьшаем правый отступ для иконки календаря */
+}
+
+select.input-base {
+  min-width: 140px;          /* Минимальная ширина для селектов */
+  width: auto;               /* Автоматическая ширина */
+}
+
+.input-base:focus {
+  outline: none;                   /* focus:outline-none */
+  box-shadow: 0 0 0 2px #4f46e5; /* focus:ring-2 focus:ring-indigo-600 */
+  border-color: #4f46e5;         /* focus:ring-indigo-600 */
+}
+
+.date-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.5rem 1rem;        /* px-4 py-2 */
+  border: 1px solid #d1d5db; /* border border-gray-300 */
+  border-radius: 0.375rem;     /* rounded-md */
+  transition: all 0.15s ease;  /* implicit in focus states */
+}
+
+.date-input:focus {
+  border-color: #4f46e5;         /* focus:border-indigo-600 */
+  outline: none;
+  box-shadow: 0 0 0 2px #4f46e5; /* focus:ring-indigo-600 */
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.checkbox-input {
+  /* Базовые стили */
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid #d1d5db; /* border-gray-300 */
+  border-radius: 0.25rem; /* rounded */
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  
+  /* Центрирование галочки */
+  display: grid;
+  place-content: center;
+}
+
+/* Стиль при наведении (но не выборе) */
+.checkbox-container:hover .checkbox-input:not(:checked) {
+  border-color: #4f46e5; /* indigo-600 */
+}
+
+/* Стиль при выборе (checked) */
+.checkbox-input:checked {
+  background-color: #4f46e5; /* indigo-600 */
+  border-color: #4f46e5;
+}
+
+/* Галочка */
+.checkbox-input:checked::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: white;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+}
+
+/* Текст лейбла при наведении */
+.checkbox-container:hover .checkbox-label {
+  color: #4f46e5; /* indigo-600 */
+}
+
+/* Текст лейбла для выбранного чекбокса */
+.checkbox-input:checked ~ .checkbox-label {
+  color: #4f46e5; /* indigo-600 */
+  font-weight: 500; /* Можно добавить для выделения */
+}
+
+.card-hover {
+  transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.section-divider {
+  height: 80px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 100%);
+}
+
+.role-card {
+  transition: all 0.3s ease;
+}
+
+.role-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+}
+
+.date-input::-webkit-calendar-picker-indicator {
+  filter: invert(0.5);
+  cursor: pointer;
+}
+
+.table-col {
+  padding: 0.75rem 1.5rem;   /* py-3 px-6 */
+  text-align: left;          /* text-left */
+  font-size: 0.75rem;        /* text-xs (12px) */
+  font-weight: 500;          /* font-medium */
+  color: #6B7280;          /* text-gray-500 */
+  text-transform: uppercase; /* uppercase */
+  letter-spacing: 0.05em;    /* tracking-wider */
+}
